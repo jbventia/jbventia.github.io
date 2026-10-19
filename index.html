@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build Your Shop Ahead Plan</title>
+<meta name="description" content="Pick the everyday products you use, set your rhythm — and they arrive before you run out. We build your DITTO schedule; you stay in control, and we never take payment.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jbventia.github.io/">
+<meta property="og:title" content="Build Your Shop Ahead Plan">
+<meta property="og:description" content="Pick the everyday products you use, set your rhythm — and they arrive before you run out. We build your DITTO schedule; you stay in control, and we never take payment.">
+<meta property="og:image" content="https://jbventia.github.io/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Build Your Shop Ahead Plan — JCVentia">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Build Your Shop Ahead Plan">
+<meta name="twitter:description" content="Pick the everyday products you use, set your rhythm — and they arrive before you run out. We build your DITTO schedule; you stay in control, and we never take payment.">
+<meta name="twitter:image" content="https://jbventia.github.io/og-image.jpg">
+<meta name="twitter:image:alt" content="Build Your Shop Ahead Plan — JCVentia">
+<style>
+  :root{
+    --teal:#0f766e; --teal-dark:#0b5b55; --teal-soft:#f0fdfa;
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#ffffff;
+    --danger:#b91c1c; --danger-soft:#fef2f2;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px;line-height:1.55}
+  body.has-sticky{padding-bottom:110px}
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px 40px}
+  .site-header{padding:28px 0 8px}
+  .site-header h1{margin:0 0 8px;font-size:1.65rem;line-height:1.25;color:var(--teal-dark)}
+  .site-header p{margin:0;color:var(--muted);font-size:1rem}
+  .progress{list-style:none;display:flex;gap:4px;padding:14px 0;margin:0 0 8px;border-bottom:1px solid var(--line)}
+  .progress li{flex:1;text-align:center;font-size:.72rem;color:var(--muted);position:relative;padding-top:26px}
+  .progress li::before{content:attr(data-n);position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:#fff;
+    font-size:.72rem;line-height:19px;color:var(--muted)}
+  .progress li.current{color:var(--teal-dark);font-weight:700}
+  .progress li.current::before{border-color:var(--teal);color:var(--teal)}
+  .progress li.done{color:var(--teal)}
+  .progress li.done::before{content:"\2713";border-color:var(--teal);background:var(--teal);color:#fff;line-height:19px}
+  .step{display:none}
+  .step.active{display:block;animation:fade .18s ease-in}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .card{border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 14px;background:#fff}
+  .card.missing{border-color:var(--danger);background:var(--danger-soft)}
+  .card h3{margin:0 0 10px;font-size:1.05rem}
+  label.f-label{display:block;font-weight:600;margin:16px 0 6px}
+  input[type=text],input[type=email],input[type=search],textarea{width:100%;padding:13px 12px;font-size:16px;
+    border:1.5px solid var(--line);border-radius:10px;font-family:inherit;color:var(--ink);background:#fff}
+  input:focus,textarea:focus,button:focus{outline:2px solid var(--teal);outline-offset:1px}
+  input.invalid{border-color:var(--danger)}
+  .fmsg{color:var(--danger);font-size:.88rem;min-height:1.2em;margin:4px 0 0}
+  .fmsg:empty{display:none}
+  .catcheck{display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--line);min-height:48px}
+  .catcheck input{width:22px;height:22px;accent-color:var(--teal)}
+  .catcheck span{font-size:1rem}
+  .prodrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);min-height:52px}
+  .prodrow input[type=checkbox]{width:24px;height:24px;accent-color:var(--teal);flex:0 0 auto}
+  .pname{flex:1 1 auto;font-size:.95rem}
+  .pprice{flex:0 0 auto;font-weight:700;white-space:nowrap}
+  .view{flex:0 0 auto;font-size:.85rem;color:var(--teal);text-decoration:none;border:1px solid var(--teal);
+    border-radius:8px;padding:7px 10px;min-height:36px;line-height:1.2}
+  .view:hover{background:var(--teal-soft)}
+  .elsebox{margin-top:12px}
+  .elsebox label{font-size:.88rem;color:var(--muted);display:block;margin-bottom:6px}
+  .note{font-size:.9rem;color:var(--muted);background:var(--teal-soft);border-radius:10px;padding:10px 12px;margin:0 0 14px}
+  .opt{display:flex;align-items:center;gap:10px;padding:11px 8px;border:1px solid var(--line);border-radius:10px;
+    margin:0 0 8px;min-height:52px;cursor:pointer}
+  .opt input{width:22px;height:22px;accent-color:var(--teal);flex:0 0 auto}
+  .opt span{font-size:.95rem}
+  .othernote{margin:2px 0 10px 0}
+  .prodhead{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+  .prodhead .pname{font-weight:700}
+  .xbtn{margin-left:auto;flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:8px;
+    width:38px;height:38px;font-size:1.25rem;color:var(--muted);cursor:pointer;line-height:1}
+  .xbtn:hover{color:var(--danger);border-color:var(--danger)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:12px 26px;
+    font-size:1.02rem;font-weight:700;border-radius:12px;border:none;cursor:pointer;font-family:inherit}
+  .btn-primary{background:var(--teal);color:#fff}
+  .btn-primary:hover{background:var(--teal-dark)}
+  .btn-primary:disabled{background:#9ca3af;cursor:not-allowed}
+  .btn-ghost{background:#fff;color:var(--teal-dark);border:1.5px solid var(--teal)}
+  .btnrow{display:flex;gap:12px;margin-top:22px}
+  .btnrow .btn{flex:1}
+  .sticky{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);
+    padding:10px 16px;z-index:50;box-shadow:0 -2px 12px rgba(0,0,0,.06)}
+  .sticky-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px}
+  #selCount{font-weight:700;flex:1}
+  .summary{background:var(--teal-soft);border-radius:14px;padding:14px;margin:14px 0}
+  .summary h4{margin:12px 0 6px;font-size:.95rem;color:var(--teal-dark)}
+  .summary h4:first-child{margin-top:0}
+  .summary ul{margin:4px 0 8px;padding-left:18px}
+  .summary li{margin-bottom:4px;font-size:.93rem}
+  .closing{background:#f9fafb;border-left:4px solid var(--teal);border-radius:0 10px 10px 0;padding:12px 14px;margin:0 0 18px}
+  .closing p{margin:0 0 10px}
+  .closing p:last-child{margin-bottom:0}
+  .thanks{text-align:center;padding:30px 0}
+  .thanks h2{color:var(--teal-dark)}
+  .linkbtn{background:none;border:none;color:var(--teal);text-decoration:underline;cursor:pointer;
+    font-size:.95rem;padding:10px;font-family:inherit}
+  .hidden{display:none!important}
+
+  .row2{display:flex;gap:10px}
+  .row2>div{flex:1;min-width:0}
+  input[type=tel]{width:100%;padding:13px 12px;font-size:16px;border:1.5px solid var(--line);
+    border-radius:10px;font-family:inherit;color:var(--ink);background:#fff}
+  input[type=tel].invalid{border-color:var(--danger)}
+  .notice{background:var(--teal-soft);border:1.5px solid var(--teal);border-radius:12px;
+    padding:12px 14px;margin:0 0 18px;font-size:.95rem}
+  .notice strong{color:var(--teal-dark)}
+  .errcard{border:1.5px solid var(--danger);background:var(--danger-soft);border-radius:12px;
+    padding:14px;margin:0 0 18px}
+  .errcard h3{margin:0 0 8px;color:var(--danger)}
+  .errcard p{margin:0 0 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site-header">
+    <h1>Build Your Shop Ahead Plan</h1>
+    <p>Tell us the everyday products you use and how often you need them &mdash; we&rsquo;ll help you set up a Shop Ahead schedule in DITTO so they arrive before you run out.</p>
+  </header>
+
+  <ol class="progress" id="progress" aria-label="Progress">
+    <li data-step="1" data-n="1" class="current">About you</li>
+    <li data-step="2" data-n="2">Choose products</li>
+    <li data-step="3" data-n="3">Your schedule</li>
+    <li data-step="4" data-n="4">Finish</li>
+  </ol>
+
+  <main id="main">
+    <!-- STEP 1 -->
+    <section class="step active" id="step1" aria-label="About you">
+      <div class="card">
+        <label class="f-label" for="name">Your name *</label>
+        <input type="text" id="name" autocomplete="name" placeholder="First and last name">
+        <p class="fmsg" id="nameErr" aria-live="polite"></p>
+        <label class="f-label" for="email">Email connected to your registered customer account *</label>
+        <input type="email" id="email" autocomplete="email" placeholder="you@example.com">
+        <p class="fmsg" id="emailErr" aria-live="polite"></p>
+        <label class="f-label" for="phone">Phone number *</label>
+        <input type="tel" id="phone" autocomplete="tel" placeholder="(808) 555-0123">
+        <p class="fmsg" id="phoneErr" aria-live="polite"></p>
+        <div class="f-label">Who&rsquo;s your IBO? *</div>
+        <div class="row2">
+          <div>
+            <input type="text" id="iboFirst" autocomplete="given-name" placeholder="First name" aria-label="Your IBO's first name">
+            <p class="fmsg" id="iboFirstErr" aria-live="polite"></p>
+          </div>
+          <div>
+            <input type="text" id="iboLast" autocomplete="family-name" placeholder="Last name" aria-label="Your IBO's last name">
+            <p class="fmsg" id="iboLastErr" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="f-label" id="catLabel">What would you like to Shop Ahead for? *</div>
+        <div id="step1Cats" role="group" aria-labelledby="catLabel"></div>
+        <p class="fmsg" id="catErr" aria-live="polite"></p>
+      </div>
+      <div class="btnrow">
+        <button type="button" class="btn btn-primary" id="toStep2">Continue</button>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="step" id="step2" aria-label="Choose products">
+      <div class="note">Check the products you use. Tap <strong>View</strong> to see any product on Amway.com. Then tell us anything else you use in that category.</div>
+      <div id="step2Body"></div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="step" id="step3" aria-label="Your schedule">
+      <div class="note"><strong>Only the products you picked are shown here.</strong> For each one, choose how many you need and how often.</div>
+      <p class="fmsg" id="schedErr" aria-live="polite"></p>
+      <div id="step3Body"></div>
+      <div class="btnrow">
+        <button type="button" class="btn btn-ghost" data-back="2">Back</button>
+        <button type="button" class="btn btn-primary" id="toStep4">Continue</button>
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="step" id="step4" aria-label="Finish">
+      <div id="step4Body"></div>
+    </section>
+
+    <!-- THANK YOU -->
+    <section class="step" id="thanks" aria-label="Thank you">
+      <div class="thanks">
+        <h2 id="thanksTitle">Mahalo! Your Shop Ahead plan is in.</h2>
+        <p>We&rsquo;ll be in touch to set up your DITTO schedule.</p>
+        <p class="note" style="text-align:left">If you don&rsquo;t hear from us within a couple of days, email us at <a href="mailto:jcventia@gmail.com">jcventia@gmail.com</a>.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="sticky" id="sticky" hidden>
+  <div class="sticky-inner">
+    <span id="selCount">0 products selected</span>
+    <button type="button" class="btn btn-ghost" data-back="1">Back</button>
+    <button type="button" class="btn btn-primary" id="stickyContinue" disabled>Continue</button>
+  </div>
+</div>
+<script>
+
+"use strict";
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbwG6AWt2qqaJu96R39u7QuowJTsp2yKM2odMbmBXlEGTzO1vOMUzzNoR-IObzxfbDU/exec";
+const MAILTO_TO = "jcventia@gmail.com";
+const FORM_DATA = {"intro":[{"title":"Your name","type":"TEXT","options":[]},{"title":"Email connected to your registered customer account","type":"TEXT","options":[]},{"title":"What would you like to Shop Ahead for?","type":"CHECKBOX","options":["Nutrition","Energy & hydration","Personal care","Oral care","Laundry","Kitchen","Home cleaning","Skincare","Other"]}],"categories":[{"name":"Nutrition","products":[{"name":"Nutrilite™ Men's Pack","price":87.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Men%E2%80%99s-Pack-p-123365","label_extra":""},{"name":"Nutrilite Begin™ Daily GI Primer","price":91.0,"url":"https://www.amway.com/en_US/Nutrilite-Begin%E2%84%A2-Daily-GI-Primer-p-127725","label_extra":""},{"name":"Nutrilite™ Balance Within™ Probiotic","price":50.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Balance-Within%E2%84%A2-Probiotic-p-120571","label_extra":""},{"name":"Nutrilite™ Digestive Enzyme","price":45.0,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Digestive-Enzyme-p-A8903","label_extra":""},{"name":"Nutrilite™ Slimmetry Dietary Supplement","price":38.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Slimmetry-Dietary-Supplement-p-117085","label_extra":""},{"name":"Nutrilite™ Perfect Pack","price":195.0,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Perfect-Pack-p-123377","label_extra":""},{"name":"Nutrilite™ Concentrated Fruits and Vegetables","price":54.0,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Concentrated-Fruits-and-Vegetables-p-100648","label_extra":""},{"name":"Nutrilite™ Kids Daily Chewable Multivitamins","price":22.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Kids-Daily-Chewable-Multivitamins-p-123043","label_extra":""},{"name":"Nutrilite™ Women's Daily Multivitamin Tablets","price":40.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Women%E2%80%99s-Daily-Multivitamin-Tablets-p-125559","label_extra":""},{"name":"Nutrilite™ Women's Pack","price":73.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Women%E2%80%99s-Pack-p-123372","label_extra":""},{"name":"Nutrilite™ Iron Folic","price":20.25,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Iron-Folic-p-102046","label_extra":""},{"name":"Nutrilite™ Cellular Aging Support","price":87.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Cellular-Aging-Support-p-127813","label_extra":""},{"name":"Nutrilite™ Carb Blocker","price":42.75,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Carb-Blocker-p-100193","label_extra":""},{"name":"Nutrilite™ Advanced Omega","price":47.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Advanced-Omega--p-126136","label_extra":""},{"name":"Nutrilite™ Men's Daily Multivitamin Tablets","price":40.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Men%E2%80%99s-Daily-Multivitamin-Tablets-p-125557","label_extra":""},{"name":"Nutrilite™ Lean Muscle","price":60.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Lean-Muscle-p-100280","label_extra":""},{"name":"Nutrilite™ Magnesium","price":39.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Magnesium-p-128032","label_extra":""},{"name":"Nutrilite™ Cal Mag D","price":50.75,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Cal-Mag-D-p-110610","label_extra":""},{"name":"Nutrilite™ Bone Health Pack","price":120.0,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Bone-Health-Pack-p-123362","label_extra":""},{"name":"Nutrilite™ Vitamin D","price":33.75,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Vitamin-D-p-119346","label_extra":""},{"name":"Nutrilite™ Omega","price":28.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Omega--p-126132","label_extra":""},{"name":"Nutrilite™ Complete Menopause Support","price":45.0,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Complete-Menopause-Support-p-126154","label_extra":""},{"name":"Nutrilite™ Heart Health CoQ10","price":23.5,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Heart-Health-CoQ10-p-A8601","label_extra":""},{"name":"Nutrilite™ Prostate Health","price":54.0,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Prostate-Health-p-A8004","label_extra":""},{"name":"Nutrilite™ Ultra Focus Energy Pack","price":49.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Ultra-Focus-Energy-Pack-p-123842","label_extra":""},{"name":"Nutrilite™ Prebiotic Fiber","price":49.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Prebiotic-Fiber-p-127444","label_extra":""},{"name":"Nutrilite™ Immunity Defense Zinc + Holy Basil - 60 tablets","price":20.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Immunity-Defense-Zinc-%2B-Holy-Basil---60-tablets-p-124692","label_extra":""},{"name":"Nutrilite™ Hair, Skin & Nail Health","price":30.25,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Hair%2C-Skin-%26-Nail-Health-p-A7553","label_extra":""},{"name":"Nutrilite™ Kids Complete Immunity Fast-Melt Powder","price":33.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Kids-Complete-Immunity-Fast-Melt-Powder--p-123046","label_extra":""},{"name":"Nutrilite™ Heart Health Pack","price":152.0,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Heart-Health-Pack-p-123367","label_extra":""},{"name":"Nutrilite™ Kids Brainiums DHA™ Jelly Splat","price":30.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Kids-Brainiums-DHA%E2%84%A2-Jelly-Splat-p-305554","label_extra":""},{"name":"Nutrilite™ Stress Relief Probiotic","price":56.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Stress-Relief-Probiotic--p-125514","label_extra":""},{"name":"Nutrilite™ Cycle Support","price":44.0,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Cycle-Support--p-126161","label_extra":""},{"name":"Nutrilite™ Vision Health","price":40.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Vision-Health-p-124708","label_extra":""},{"name":"Nutrilite™ Metabolic Pre & Postbiotic","price":47.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Metabolic-Pre-%26-Postbiotic-p-127620","label_extra":""},{"name":"Nutrilite™ Immunity Echinacea","price":46.0,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Immunity-Echinacea-p-A5986","label_extra":""},{"name":"Nutrilite™ Cholesterol Health","price":40.5,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Cholesterol-Health-p-100070","label_extra":""},{"name":"Nutrilite™ Kids Toddler Immunity Drops","price":28.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Kids-Toddler-Immunity-Drops--p-126185","label_extra":""},{"name":"Nutrilite™ Chewable Vitamin E","price":50.75,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Chewable-Vitamin-E-p-A4042","label_extra":""},{"name":"Nutrilite™ Sleep Health","price":32.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Sleep-Health-p-127940","label_extra":""},{"name":"Nutrilite™ ClearGuard™","price":31.5,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-ClearGuard%26trade%3B-p-102735","label_extra":""},{"name":"Nutrilite™ Organics Women's Daily Multi Gummies","price":41.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Women%E2%80%99s-Daily-Multi-Gummies-p-125562","label_extra":""},{"name":"Nutrilite™ Organics Men's Daily Multi Gummies","price":41.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Men%E2%80%99s-Daily-Multi-Gummies-p-125561","label_extra":""},{"name":"Nutrilite™ Organics Green Superfood Powder","price":52.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Green-Superfood-Powder-p-125937","label_extra":""},{"name":"Nutrilite™ Organics Immunity Superfood Powder","price":52.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Immunity-Superfood-Powder-p-125936","label_extra":""},{"name":"Nutrilite™ Organics Ashwagandha Capsules","price":51.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Ashwagandha-Capsules--p-308641","label_extra":""},{"name":"Nutrilite™ Organics Turmeric Gummies","price":45.0,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Turmeric-Gummies-p-308638","label_extra":""},{"name":"Nutrilite™ Organics Lion's Mane Mushroom Capsules","price":39.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Lion%E2%80%99s-Mane-Mushroom-Capsules-p-308639","label_extra":""},{"name":"Nutrilite™ Organics Horny Goat Weed & Tribulus Capsules","price":52.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Horny-Goat-Weed-%26-Tribulus-Capsules-p-308640","label_extra":""},{"name":"Nutrilite™ Organics Turmeric Capsules","price":40.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Turmeric-Capsules-p-308642","label_extra":""},{"name":"Nutrilite™ Organics Chamomile Tea","price":20.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Chamomile-Tea-p-308636","label_extra":""},{"name":"n* by Nutrilite™ Go Shield – Immunity Gummies","price":27.0,"url":"https://www.amway.com/en_US/n-by-Nutrilite%E2%84%A2-Go-Shield-%E2%80%93-Immunity%C2%A0Gummies-p-124555","label_extra":""},{"name":"n* by Nutrilite™ #nofilter Collagen Gummies","price":25.75,"url":"https://www.amway.com/en_US/n-by-Nutrilite%E2%84%A2-%23nofilter-Collagen-Gummies-p-125545","label_extra":""},{"name":"n* by Nutrilite™ Eye Mojo – Blue Light Vision Gummies","price":24.75,"url":"https://www.amway.com/en_US/n-by-Nutrilite%E2%84%A2-Eye-Mojo-%E2%80%93-Blue-Light-Vision-Gummies--p-125544","label_extra":""},{"name":"n* by Nutrilite™ #nofilter Collagen Peptides","price":37.25,"url":"https://www.amway.com/en_US/n-by-Nutrilite%E2%84%A2-%23nofilter-Collagen-Peptides--p-125553","label_extra":""},{"name":"n* by Nutrilite™ Collagen Shots","price":51.75,"url":"https://www.amway.com/en_US/n-by-Nutrilite%E2%84%A2-Collagen-Shots-p-124936","label_extra":""},{"name":"n* by Nutrilite™ Sweet Dreams – Sleep Gummies","price":24.75,"url":"https://www.amway.com/en_US/n-by-Nutrilite%E2%84%A2-Sweet-Dreams-%E2%80%93%C2%A0Sleep-Gummies-p-124506","label_extra":""},{"name":"Perfect Empowered Drinking Water®","price":58.5,"url":"https://www.amway.com/en_US/Perfect-Empowered-Drinking-Water%C2%AE-p-285375","label_extra":""},{"name":"Nutrilite™ Organics All-in-One Meal Powder (other flavors available)","price":82.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Women%E2%80%99s-Daily-Multi-Gummies-p-125562","label_extra":""},{"name":"Nutrilite™ Organics All-in-One Shakes (other flavors available)","price":83.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-Women%E2%80%99s-Daily-Multi-Gummies-p-125562","label_extra":""},{"name":"Nutrilite™ Organics All-in-One Bars (other flavors available)","price":66.25,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-All-in-One-Bars-%E2%80%93-Double-Chocolate--p-316303","label_extra":""},{"name":"Nutrilite™ Organics Plant Protein Powder (other flavors available)","price":49.5,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Organics-All-in-One-Bars-%E2%80%93-Double-Chocolate--p-316303","label_extra":""},{"name":"Nutrilite™ Double X™ Multivitamin (other sizes available)","price":77.75,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Double-X%26trade%3B-Vitamin-Mineral-Phytonutrient-Supplement---31-Day-Supply-with-3-Compartment-Case-p-A4300","label_extra":""},{"name":"Nutrilite™ Vitamin B Dual-Action (other sizes available)","price":44.0,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Vitamin-B-Dual-Action---120-Tablets-p-110171","label_extra":""},{"name":"Nutrilite™ Joint Health (other sizes available)","price":74.25,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Joint-Health---60-Day-Supply-p-106964","label_extra":""},{"name":"Nutrilite™ Vitamin C Extended Release (other sizes available)","price":63.0,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Vitamin-C-Extended-Release-p-109747","label_extra":""},{"name":"Nutrilite™ Wellness Bars - Nutty Dark Chocolate","price":33.75,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Wellness-Bars---Nutty-Dark-Chocolate-p-111045","label_extra":""},{"name":"Everyday Nutrition Solution (other flavors available)","price":174.5,"url":"https://www.amway.com/en_US/Everyday-Nutrition-Solution---Unflavored-p-322022","label_extra":""},{"name":"Nutrilite™ Begin 30 Holistic Wellness Program Solution (other flavors available)","price":240.75,"url":"https://www.amway.com/en_US/Nutrilite%E2%84%A2-Begin-30-Holistic-Wellness-Program-Solution---Chocolate-Chocolate-p-326780","label_extra":""},{"name":"Energy Solution","price":180.0,"url":"https://www.amway.com/en_US/Energy-Solution-p-321549","label_extra":""},{"name":"Healthy Aging Solution","price":173.25,"url":"https://www.amway.com/en_US/Healthy-Aging-Solution-p-321548","label_extra":""},{"name":"Walking to Bronze Bundle","price":259.0,"url":"https://www.amway.com/en_US/Walking-to-Bronze-Bundle-p-321111","label_extra":""},{"name":"Fitness Jump Start Solution (other flavors available)","price":211.5,"url":"https://www.amway.com/en_US/Fitness-Jump-Start-Solution-%E2%80%93-Vanilla-p-128208","label_extra":""},{"name":"Sleep + Stress Solution","price":220.5,"url":"https://www.amway.com/en_US/Sleep-%2B-Stress-Solution-p-321893","label_extra":""},{"name":"Toning Stack","price":362.25,"url":"https://www.amway.com/en_US/-s-USS0004","label_extra":""},{"name":"Inner + Outer Beauty Solution","price":382.5,"url":"https://www.amway.com/en_US/-s-USS0013","label_extra":""},{"name":"Peak Performance Stack","price":238.25,"url":"https://www.amway.com/en_US/-s-USS0031","label_extra":""},{"name":"Muscle Gains Stack","price":343.0,"url":"https://www.amway.com/en_US/-s-USS0003","label_extra":""},{"name":"Burn Stack","price":351.0,"url":"https://www.amway.com/en_US/-s-USS0032","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"},{"name":"Energy & hydration","products":[{"name":"Nutrilite™ Twist Tubes 2GO™ (other flavors available)","price":28.25,"url":"https://www.amway.com/en_US/Nutrilite%26trade%3B-Twist-Tubes-2GO%26trade%3B-%26ndash%3B-Variety-Pack-p-110922","label_extra":""},{"name":"XS™ Creatine+","price":62.0,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Creatine%2B-p-128463","label_extra":""},{"name":"XS™ Ignite Powder – Moro Blood Orange","price":51.75,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Ignite-Powder-%E2%80%93-Moro-Blood-Orange-p-127811","label_extra":""},{"name":"XS™ CBD Cream","price":68.75,"url":"https://www.amway.com/en_US/XS%E2%84%A2-CBD-Cream-p-296753","label_extra":""},{"name":"XS™ Sports Protein Bars (other flavors available)","price":48.25,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Sports-Protein-Bars-%E2%80%93-Chocolate-Peanut-Butter-p-110385","label_extra":""},{"name":"XS™ Sports Protein Shakes (other flavors available)","price":60.75,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Sports-Protein-Shakes-%E2%80%93-Vanilla-Cr%C3%A8me-p-110370","label_extra":""},{"name":"XS™ Grass-Fed Whey Protein (other flavors available)","price":74.25,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Grass-Fed-Whey-Protein-%E2%80%93-Strawberry-p-128155","label_extra":""},{"name":"XS™ Grass-Fed Whey Protein Powder Sachets (other flavors available)","price":60.75,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Grass-Fed-Whey-Protein-%E2%80%93-Strawberry-p-128155","label_extra":""},{"name":"XS™ Pre-Workout Boost (other sizes available)","price":40.5,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Pre-Workout-Boost---Blue-Raspberry-%2812-Stick-Packs%29-p-316377","label_extra":""},{"name":"XS™ Muscle Multiplier (other flavors available)","price":56.25,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Muscle-Multiplier-%E2%80%A0-%E2%80%93-Watermelon-p-126754","label_extra":""},{"name":"XS™ Post-Workout Recovery (other sizes available)","price":40.5,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Post-Workout-Recovery---Fruit-Punch-%2812-Stick-Packs%29-p-316380","label_extra":""},{"name":"XS™ CocoWater Hydration Drink Mix (other flavors available)","price":33.75,"url":"https://www.amway.com/en_US/XS%E2%84%A2-CocoWater-Hydration-Drink-Mix-%E2%80%93-Pineapple-Coconut-p-110631","label_extra":""},{"name":"XS™ Energy Drink 12 oz (other flavors available)","price":44.0,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Energy-Drink-12-oz---Root-Beer-p-126202","label_extra":""},{"name":"XS™ Sparkling Juiced Energy 12 oz (other flavors available)","price":44.0,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Sparkling-Juiced-Energy-12-oz---Mango-Pineapple-Guava-p-126986","label_extra":""},{"name":"XS™ Energy + Burn 12 oz (other flavors available)","price":48.25,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Energy-%2B-Burn-12-oz-%E2%80%93-Kiwi-Strawberry-p-127936","label_extra":""},{"name":"XS™ Juiced and Burn 12 oz – Variety Case","price":47.25,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Juiced-and-Burn-12-oz-%E2%80%93-Variety-Case-p-127071","label_extra":""},{"name":"XS™ Energy + Focus Dietary Supplement - 60 Tablets","price":48.25,"url":"https://www.amway.com/en_US/XS%26trade%3B-Energy-%2B-Focus-Dietary-Supplement---60-Tablets-p-101593","label_extra":""},{"name":"XS™ Elite + Focus Energy Drink – Peach Mango","price":50.75,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Elite-%2B-Focus-Energy-Drink-%E2%80%93-Peach-Mango--p-266673","label_extra":""},{"name":"XS™ Protein Crisps – Sriracha Lime","price":47.25,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Protein-Crisps-%E2%80%93-Sriracha-Lime-p-110628","label_extra":""},{"name":"XS™ Sports Twist Tubes (other flavors available)","price":27.0,"url":"https://www.amway.com/en_US/XS%E2%84%A2-Sports-Twist-Tubes-%E2%80%93-Raspberry-Lemonade-p-305555","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"},{"name":"Personal care","products":[{"name":"Satinique™ Smooth Moisture Conditioner (other sizes available)","price":18.0,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Smooth-Moisture-Conditioner-p-126451","label_extra":""},{"name":"Satinique™ Intensive Repair Shampoo (other sizes available)","price":19.0,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Intensive-Repair-Shampoo--p-126452","label_extra":""},{"name":"Satinique™ Intensive Repair Conditioner (other sizes available)","price":34.75,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Intensive-Repair-Shampoo--p-126452","label_extra":""},{"name":"Satinique™ 2-in-1 Shampoo & Conditioner (other sizes available)","price":17.0,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-2-in-1-Shampoo-%26-Conditioner-p-126455","label_extra":""},{"name":"Satinique™ Anti-Dandruff Scalp & Hair Shampoo (other sizes available)","price":18.0,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Anti-Dandruff-Scalp-%26-Hair-Shampoo-p-126463","label_extra":""},{"name":"Satinique™ Anti-Hair Fall Scalp & Hair Shampoo (other sizes available)","price":19.0,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Anti-Hair-Fall-Scalp-%26-Hair-Shampoo--p-126457","label_extra":""},{"name":"Satinique™ Anti-Hair Fall Scalp & Hair Conditioner (other sizes available)","price":19.0,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Anti-Hair-Fall-Scalp-%26-Hair-Shampoo--p-126457","label_extra":""},{"name":"Satinique™ Intensive Repair Hair Lotion","price":25.75,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Intensive-Repair-Hair-Lotion-p-126468","label_extra":""},{"name":"Satinique™ Intensive Repair Hair Oil Serum","price":33.75,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Intensive-Repair-Hair-Oil-Serum--p-126467","label_extra":""},{"name":"Satinique™ Intensive Repair Hair Treatment","price":30.25,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Intensive-Repair-Hair-Treatment-p-126465","label_extra":""},{"name":"Satinique™ Smooth Moisture Shampoo (other sizes available)","price":33.75,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Smooth-Moisture-Conditioner-p-126451","label_extra":""},{"name":"Satinique™ Anti-Hair Fall Scalp Tonic","price":34.75,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Anti-Hair-Fall-Scalp-Tonic--p-126466","label_extra":""},{"name":"Satinique™ Purifying Scalp & Hair Conditioner","price":18.0,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Purifying-Scalp-%26-Hair-Conditioner-p-126462","label_extra":""},{"name":"Satinique™ Purifying Scalp & Hair Shampoo (other sizes available)","price":18.0,"url":"https://www.amway.com/en_US/Satinique%E2%84%A2-Purifying-Scalp-%26-Hair-Conditioner-p-126462","label_extra":""},{"name":"g&h™ Nourish Hand Cream","price":17.75,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Nourish-Hand-Cream-p-125902","label_extra":""},{"name":"g&h™ Protect Hand Sanitizer","price":15.5,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Protect-Hand-Sanitizer-p-126855","label_extra":""},{"name":"g&h™ Refresh Exfoliating Body Wash (other sizes available)","price":33.75,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Refresh-Exfoliating-Body-Wash-p-125915","label_extra":""},{"name":"g&h™ Protect Body Lotion SPF 50","price":32.5,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Protect-Body-Lotion-SPF-50%2B-p-125901","label_extra":""},{"name":"g&h™ Baby Wash & Shampoo","price":18.25,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Baby-Wash-%26-Shampoo-p-126308","label_extra":""},{"name":"g&h™ Refresh Body Milk","price":18.5,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Refresh-Body-Milk-p-125893","label_extra":""},{"name":"g&h™ Nourish Body Wash (other sizes available)","price":17.25,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Nourish-Body-Wash-p-125890","label_extra":""},{"name":"g&h™ Protect Hand Soap","price":11.25,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Protect-Hand-Soap-p-125894","label_extra":""},{"name":"g&h™ Protect Bar Soap","price":33.75,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Protect-Bar-Soap-p-125897TR","label_extra":""},{"name":"g&h™ Protect Aluminum Free Deodorant","price":14.5,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Protect-Aluminum-Free-Deodorant-p-321108","label_extra":""},{"name":"g&h™ Nourish Body Lotion","price":18.5,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Nourish-Body-Lotion-p-125891","label_extra":""},{"name":"g&h™ Baby Lotion","price":18.25,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Baby-Lotion-p-126309","label_extra":""},{"name":"g&h™ Protect Antiperspirant Deodorant Roll-On","price":12.75,"url":"https://www.amway.com/en_US/g%26h%E2%84%A2-Protect-Antiperspirant-Deodorant-Roll-On-p-127877","label_extra":""},{"name":"g&h™ Dynamic Duo (2-product bundle)","price":35.5,"url":"https://www.amway.com/en_US/-s-USS0017","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"},{"name":"Oral care","products":[{"name":"Glister™ Multi-Action Concentrated Oral Rinse","price":16.5,"url":"https://www.amway.com/en_US/Glister%E2%84%A2-Multi-Action-Concentrated-Oral-Rinse-p-124108","label_extra":""},{"name":"Glister™ Multi-Action Power Toothbrush","price":197.0,"url":"https://www.amway.com/en_US/Glister%E2%84%A2-Multi-Action-Power-Toothbrush-p-127705","label_extra":""},{"name":"Glister™ Multi-Action Power Toothbrush Refills","price":42.75,"url":"https://www.amway.com/en_US/Glister%E2%84%A2-Multi-Action-Power-Toothbrush-Refills-p-127706","label_extra":""},{"name":"Glister™ Multi-Action Dental Floss, 2-pack","price":14.75,"url":"https://www.amway.com/en_US/Glister%E2%84%A2-Multi-Action-Dental-Floss%2C-2-pack-p-124112","label_extra":""},{"name":"Glister™ Mint Refresher Spray","price":8.75,"url":"https://www.amway.com/en_US/Glister%E2%84%A2-Mint-Refresher-Spray-p-124111","label_extra":""},{"name":"Glister™ Travel Size Multi-Action Toothpaste, 6-pack","price":24.75,"url":"https://www.amway.com/en_US/Glister%E2%84%A2-Travel-Size-Multi-Action-Toothpaste%2C-6-pack-p-126001","label_extra":""},{"name":"Glister™ Multi-Action Toothpaste","price":9.0,"url":"https://www.amway.com/en_US/Glister%E2%84%A2-Multi-Action-Toothpaste-p-124106","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"},{"name":"Laundry","products":[{"name":"Amway Home™ SA8™ Liquid Laundry Detergent","price":63.25,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-SA8%E2%84%A2-Liquid-Laundry-Detergent-p-110478","label_extra":""},{"name":"Amway Home™ SA8™ Powder Laundry Detergent","price":63.25,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-SA8%E2%84%A2-Powder-Laundry-Detergent-p-109849","label_extra":""},{"name":"Amway Home™ Pour and Measure Cap","price":5.25,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Pour-and-Measure-Cap-p-AD5113","label_extra":""},{"name":"Amway Home™ Fabric Softener – Floral Scent","price":17.0,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Fabric-Softener-%E2%80%93-Floral-Scent-p-110480","label_extra":""},{"name":"Amway Home™ Prewash Spray","price":22.25,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Prewash-Spray-p-110403","label_extra":""},{"name":"Amway Home™ All Fabric Bleach","price":21.0,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-All-Fabric-Bleach-p-124485","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"},{"name":"Kitchen","products":[{"name":"Amway Home™ Dish Drops™ Dishwashing Liquid – Original Scent","price":19.0,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Dish-Drops%E2%84%A2-Dishwashing-Liquid-%E2%80%93-Original-Scent-p-110488","label_extra":""},{"name":"Amway Home™ Dish Drops™ Dispenser Bottle","price":9.25,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Dish-Drops%E2%84%A2-Dispenser-Bottle-p-107890","label_extra":""},{"name":"Amway Home™ Automatic Dish Tablets","price":31.25,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Automatic-Dish-Tablets-p-109867","label_extra":""},{"name":"iCook™ Replacement Knob/Fingerguard – Steel Lids","price":5.5,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-Replacement-Knob-Fingerguard-%E2%80%93-Steel-Lids-p-400137","label_extra":""},{"name":"iCook™ Replacement Handle – Nonstick Pan Long Handle","price":6.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-Replacement-Handle-%E2%80%93-Nonstick-Pan-Long-Handle-p-400138","label_extra":""},{"name":"iCook™ Replacement Side Handle – 12-Inch Nonstick Fry Pan","price":5.5,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-Replacement-Side-Handle-%E2%80%93-12-Inch-Nonstick-Fry-Pan-p-400140","label_extra":""},{"name":"iCook™ Replacement Knob/Fingerguard – Glass Lids","price":7.25,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-Replacement-Knob-Fingerguard-%E2%80%93-Glass-Lids-p-400141","label_extra":""},{"name":"iCook™ 5-Piece Knifeware Set","price":619.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-5-Piece-Knifeware-Set-p-102709E","label_extra":""},{"name":"iCook™ 9.5-inch Nonstick Frypan with Lid","price":258.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-9-5-inch-Nonstick-Frypan-with-Lid-p-124694","label_extra":""},{"name":"iCook™ Replacement Handle – Side Handle for Large Pieces","price":5.5,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-Replacement-Handle-%E2%80%93-Side-Handle-for-Large-Pieces-p-400139","label_extra":""},{"name":"iCook™ Replacement Handle – Long Handle","price":6.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-Replacement-Handle-%E2%80%93-Long-Handle-p-400135","label_extra":""},{"name":"iCook™ Replacement Handle – Side Handle","price":5.25,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-Replacement-Handle-%E2%80%93-Side-Handle-p-400136","label_extra":""},{"name":"iCook™ 19-Piece Collection","price":1729.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-19-Piece-Collection-p-120231","label_extra":""},{"name":"iCook™ Multipurpose Shears","price":84.5,"url":"https://www.amway.com/en_US/iCook%26trade%3B-Multipurpose-Shears-p-102715","label_extra":""},{"name":"iCook™ 11-inch Nonstick Frypan with Lid","price":314.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-11-inch-Nonstick-Frypan-with-Lid-p-124695","label_extra":""},{"name":"iCook™ 6-Piece 8 L/8-Quart Dutch Oven","price":494.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-6-Piece-8-L-8-Quart-Dutch-Oven-p-101086","label_extra":""},{"name":"iCook™ 4-Piece 4 L/4 Quart Stock Pot","price":359.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-4-Piece-4-L-4-Quart-Stock-Pot-p-101085","label_extra":""},{"name":"iCook™ 5-Piece Sauté Set","price":528.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-5-Piece-Saut%C3%A9-Set-p-101084","label_extra":""},{"name":"iCook™ 4-Piece Saucepan Set","price":348.0,"url":"https://www.amway.com/en_US/iCook%E2%84%A2-4-Piece-Saucepan-Set-p-101082","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"},{"name":"Home cleaning","products":[{"name":"Amway Home™ 1L Dispenser Pump","price":6.5,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-1L-Dispenser-Pump-p-103972","label_extra":""},{"name":"Amway Home™ Spray Bottle","price":8.25,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Spray-Bottle-p-116798","label_extra":""},{"name":"Amway Home™ Glass Cleaner","price":20.5,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Glass-Cleaner-p-112537","label_extra":""},{"name":"Amway Home™ Kitchen Cleaner","price":20.5,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Kitchen-Cleaner-p-112536","label_extra":""},{"name":"Amway Home™ Bathroom Cleaner","price":20.5,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Bathroom-Cleaner-p-112546","label_extra":""},{"name":"Amway Home™ Scrub Buds™ Scouring Pads","price":9.75,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-Scrub-Buds%E2%84%A2-Scouring-Pads-p-110490","label_extra":""},{"name":"Amway Home™ L.O.C.™ Multi-Purpose Cleaner","price":15.0,"url":"https://www.amway.com/en_US/Amway-Home%E2%84%A2-L-O-C-%E2%84%A2-Multi-Purpose-Cleaner-p-E0001","label_extra":""},{"name":"eSpring™ Under the Counter Unit with Aux Faucet","price":1508.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Under-the-Counter-Unit-with-Aux-Faucet-p-122941","label_extra":""},{"name":"eSpring™ Under the Counter Unit with Single Line Output","price":1508.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Under-the-Counter-Unit-with-Single-Line-Output-p-122942","label_extra":""},{"name":"eSpring™ Above the Counter Unit with Diverter","price":1508.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Above-the-Counter-Unit-with-Diverter-p-122940","label_extra":""},{"name":"eSpring™ 220v Electronic Module","price":92.5,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-220v-Electronic-Module-p-WTI0417Z","label_extra":""},{"name":"eSpring™ Filter Retaining Ring","price":11.25,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Filter-Retaining-Ring-p-WTI0423Z","label_extra":""},{"name":"eSpring™ Water Treatment System Power Supply","price":44.5,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Water-Treatment-System-Power-Supply-p-WTI0420","label_extra":""},{"name":"eSpring™ Filter Bracket","price":29.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Filter-Bracket-p-WTI0706Z","label_extra":""},{"name":"eSpring™ Water Purifier Brochure (other sizes available)","price":15.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Water-Purifier-Brochure-p-402086","label_extra":""},{"name":"eSpring™ Plugs Assembly Service Part","price":5.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Plugs-Assembly-Service-Part--p-WTI1148Z","label_extra":""},{"name":"eSpring™ Replacement Diverter Kit","price":225.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Replacement-Diverter-Kit--p-127066","label_extra":""},{"name":"eSpring™ Under the Counter Unit with Designer Faucet (other sizes available)","price":1620.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Under-the-Counter-Unit-with-Aux-Faucet-p-122941","label_extra":""},{"name":"eSpring™ Pre-Filter","price":15.75,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Pre-Filter-p-127063","label_extra":""},{"name":"eSpring™ Tubing Set Replacement Kit","price":14.75,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Tubing-Set-Replacement-Kit-p-127064","label_extra":""},{"name":"eSpring™ Single Line Faucet/Ice Maker Conversion Kit","price":206.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Single-Line-Faucet-Ice-Maker-Conversion-Kit-p-101398","label_extra":""},{"name":"eSpring™ e3 Carbon Filter","price":293.0,"url":"https://www.amway.com/en_US/eSpring-e3-Carbon-Filter-p-122943","label_extra":""},{"name":"eSpring™ Angle Stop Adapter Valve (Tee for Cold Water Line)","price":31.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Angle-Stop-Adapter-Valve-%28Tee-for-Cold-Water-Line%29-p-WTI0894","label_extra":""},{"name":"eSpring™ Replacement Diverter","price":89.25,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Replacement-Diverter-p-127065","label_extra":""},{"name":"eSpring™ UV Water Purifier Replacement Filter Cartridge With UV Technology","price":336.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-UV-Water-Purifier-Replacement-Filter-Cartridge-With-UV-Technology-p-100186","label_extra":""},{"name":"eSpring™ Auxiliary Faucet Replacement Kit","price":161.0,"url":"https://www.amway.com/en_US/eSpring%E2%84%A2-Auxiliary-Faucet-Replacement-Kit-p-125627","label_extra":""},{"name":"Atmosphere™ Replacement Carbon (Odor) Filter","price":141.0,"url":"https://www.amway.com/en_US/Atmosphere%26trade%3B-Replacement-Carbon-%28Odor%29-Filter-p-118040","label_extra":""},{"name":"Atmosphere™ Replacement HEPA Filter","price":197.0,"url":"https://www.amway.com/en_US/Atmosphere%26trade%3B-Replacement-HEPA-Filter-p-101078","label_extra":""},{"name":"Atmosphere Mini™ Replacement Filter","price":203.0,"url":"https://www.amway.com/en_US/Atmosphere-Mini%E2%84%A2-Replacement-Filter--p-123322","label_extra":""},{"name":"Atmosphere Mini™ Air Treatment System","price":1069.0,"url":"https://www.amway.com/en_US/Atmosphere-Mini%E2%84%A2-Air-Treatment-System-p-124746","label_extra":""},{"name":"Atmosphere Sky™ Air Treatment System","price":1969.0,"url":"https://www.amway.com/en_US/Atmosphere-Sky%E2%84%A2-Air-Treatment-System-p-120539","label_extra":""},{"name":"Atmosphere Sky™ Replacement HEPA Filter","price":216.0,"url":"https://www.amway.com/en_US/Atmosphere-Sky%26trade%3B-Replacement-HEPA-Filter-p-120540","label_extra":""},{"name":"Atmosphere Sky™ Replacement Carbon (Odor) Filter","price":158.0,"url":"https://www.amway.com/en_US/Atmosphere-Sky%E2%84%A2-Replacement-Carbon-%28Odor%29-Filter-p-120541","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"},{"name":"Skincare","products":[{"name":"Artistry Studio™ Glow-up Solution Bundle","price":81.0,"url":"https://www.amway.com/en_US/Artistry-Studio%E2%84%A2-Glow-up-Solution-Bundle-p-266672","label_extra":""},{"name":"Artistry Skin Nutrition™ Balancing System Bundle","price":108.0,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Balancing-System-Bundle-p-266686","label_extra":""},{"name":"Artistry Skin Nutrition™ Firming System Bundle","price":174.25,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Firming-System-Bundle-p-266695","label_extra":""},{"name":"Artistry Skin Nutrition™ Hydrating System Bundle","price":120.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Hydrating-System-Bundle-p-266693","label_extra":""},{"name":"Artistry Skin Nutrition™ Renewing System Bundle","price":169.75,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Renewing-System-Bundle-p-266694","label_extra":""},{"name":"Everyday Skin Solution","price":198.0,"url":"https://www.amway.com/en_US/Everyday-Skin-Solution-p-321550","label_extra":""},{"name":"Artistry Labs™ Retexturizing System Aquabrasion Device Spare Parts","price":9.0,"url":"https://www.amway.com/en_US/Artistry-Labs%E2%84%A2-Retexturizing-System-Aquabrasion-Device-Spare-Parts-p-127173V","label_extra":""},{"name":"Artistry Labs™ Retexturizing System","price":424.0,"url":"https://www.amway.com/en_US/Artistry-Labs%E2%84%A2-Retexturizing-System-p-126807V","label_extra":""},{"name":"Artistry Labs™ Retexturizing System Refill","price":224.0,"url":"https://www.amway.com/en_US/Artistry-Labs%E2%84%A2-Retexturizing-System-Refill-p-125547V","label_extra":""},{"name":"Artistry Labs™ Illuminating Serum","price":127.0,"url":"https://www.amway.com/en_US/Artistry-Labs-Illuminating-Serum-p-126220V","label_extra":""},{"name":"Artistry LongXevity™ Soft Cream","price":411.0,"url":"https://www.amway.com/en_US/Artistry-LongXevity%E2%84%A2-Soft-Cream-p-127572V","label_extra":""},{"name":"Artistry Labs™ Retexturizing Serum","price":127.0,"url":"https://www.amway.com/en_US/Artistry-Labs%E2%84%A2-Retexturizing-Serum-p-128178V","label_extra":""},{"name":"Artistry Skin Nutrition™ Sleeping Mask","price":67.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Sleeping-Mask-p-125575","label_extra":""},{"name":"Artistry Signature Select™ Firming Mask","price":55.25,"url":"https://www.amway.com/en_US/Artistry-Signature-Select%26trade%3B-Firming-Mask-p-122341V","label_extra":""},{"name":"Artistry™ Intensive Skincare 14 Night Reset Program","price":242.0,"url":"https://www.amway.com/en_US/Artistry%E2%84%A2-Intensive-Skincare-14-Night-Reset-Program-p-123776V","label_extra":""},{"name":"Artistry Signature Select™ Polishing Mask","price":50.75,"url":"https://www.amway.com/en_US/Artistry-Signature-Select%E2%84%A2-Polishing-Mask-p-122339V","label_extra":""},{"name":"Artistry Signature Select™ Purifying Mask","price":50.75,"url":"https://www.amway.com/en_US/Artistry-Signature-Select%26trade%3B-Purifying-Mask-p-122342V","label_extra":""},{"name":"Artistry Skin Nutrition™ Hydrating Eye Gel Cream","price":48.25,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Hydrating-Eye-Gel-Cream--p-123796V","label_extra":""},{"name":"Artistry Skin Nutrition™ Balancing Fresh Shake Toner","price":27.0,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Balancing-Fresh-Shake-Toner--p-123794V","label_extra":""},{"name":"Artistry Labs™ Illuminating System","price":223.0,"url":"https://www.amway.com/en_US/Artistry-Labs%E2%84%A2-Illuminating-System-p-126219V","label_extra":""},{"name":"Artistry Studio™ Done with Zit! Acne Treatment + Clearing Gel 2% Salicylic Acid","price":37.25,"url":"https://www.amway.com/en_US/Artistry-Studio%E2%84%A2-Done-with-Zit%21-Acne-Treatment-%2B-Clearing-Gel-2%25-Salicylic-Acid--p-125327","label_extra":""},{"name":"Artistry LongXevity™ Rich Cream","price":411.0,"url":"https://www.amway.com/en_US/Artistry-LongXevity%E2%84%A2-Rich-Cream-p-127571V","label_extra":""},{"name":"Artistry LongXevity™ Eye Cream","price":231.0,"url":"https://www.amway.com/en_US/Artistry-LongXevity%E2%84%A2-Eye-Cream-p-127573V","label_extra":""},{"name":"Artistry LongXevity™ Rich Cream Refill","price":370.0,"url":"https://www.amway.com/en_US/Artistry-LongXevity%E2%84%A2-Rich-Cream-Refill-p-127575V","label_extra":""},{"name":"Artistry LongXevity™ Eye Cream Refill","price":208.0,"url":"https://www.amway.com/en_US/Artistry-LongXevity%E2%84%A2-Eye-Cream-Refill-p-127577V","label_extra":""},{"name":"Artistry LongXevity™ Soft Cream Refill","price":370.0,"url":"https://www.amway.com/en_US/Artistry-LongXevity%E2%84%A2-Soft-Cream-Refill-p-127576V","label_extra":""},{"name":"Artistry Skin Nutrition™ Micellar Makeup Remover + Cleanser","price":41.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Micellar-Makeup-Remover-%2B-Cleanser--p-123791V","label_extra":""},{"name":"Artistry™ Men Post Shave Toner","price":46.0,"url":"https://www.amway.com/en_US/Artistry%E2%84%A2-Men-Post-Shave-Toner-p-111227V","label_extra":""},{"name":"Artistry Skin Nutrition™ Defying Serum","price":99.0,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition-Defying-Serum-p-127019V","label_extra":""},{"name":"Artistry Skin Nutrition™ Balancing Matte Day Lotion SPF 30","price":49.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Balancing-Matte-Day-Lotion-SPF-30--p-123799","label_extra":""},{"name":"Artistry™ Men Facial Moisturizer","price":59.5,"url":"https://www.amway.com/en_US/Artistry%E2%84%A2-Men-Facial-Moisturizer-p-111228V","label_extra":""},{"name":"Artistry Skin Nutrition™ Balancing Jelly Cleanser","price":31.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Balancing-Jelly-Cleanser--p-123792V","label_extra":""},{"name":"Artistry Skin Nutrition™ Balancing Matte Gel Lotion","price":49.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Balancing-Matte-Gel-Lotion--p-123797V","label_extra":""},{"name":"Artistry Skin Nutrition™ Firming Ultra Lifting Cream","price":91.0,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Firming-Ultra-Lifting-Cream--p-123786V","label_extra":""},{"name":"Artistry Skin Nutrition™ Multi-Defense UV Protect Broad Spectrum SPF 50+","price":67.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Multi-Defense-UV-Protect-Broad-Spectrum-SPF-50%2B-p-124823","label_extra":""},{"name":"Artistry™ Intensive Skincare Anti-Wrinkle Firming Serum","price":113.0,"url":"https://www.amway.com/en_US/Artistry%E2%84%A2-Intensive-Skincare-Anti-Wrinkle-Firming-Serum-p-109709","label_extra":""},{"name":"Artistry Studio™ Glow Boss Cleanser + Exfoliator","price":24.75,"url":"https://www.amway.com/en_US/Artistry-Studio%E2%84%A2-Glow-Boss-Cleanser-%2B-Exfoliator-p-124812","label_extra":""},{"name":"Artistry Skin Nutrition™ Hydrating Gel Cream","price":54.0,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Hydrating-Gel-Cream--p-123798V","label_extra":""},{"name":"Artistry Skin Nutrition™ Hydrating Mousse Cleanser","price":37.25,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Hydrating-Mousse-Cleanser--p-123793V","label_extra":""},{"name":"Artistry Skin Nutrition™ Renewing Foaming Cleanser","price":38.25,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Renewing-Foaming-Cleanser--p-123781V","label_extra":""},{"name":"Artistry Skin Nutrition™ Renewing Reactivation Eye Cream","price":65.25,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Renewing-Reactivation-Eye-Cream--p-123784V","label_extra":""},{"name":"Artistry Skin Nutrition™ Renewing Reactivation Day Lotion SPF 30","price":86.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Renewing-Reactivation-Day-Lotion-SPF-30--p-123857","label_extra":""},{"name":"Artistry Studio™ My Main Squeeze Moisturizer","price":32.5,"url":"https://www.amway.com/en_US/Artistry-Studio%E2%84%A2-My-Main-Squeeze-Moisturizer-p-125966","label_extra":""},{"name":"Artistry™ Men Gentle Face Wash","price":36.0,"url":"https://www.amway.com/en_US/Artistry%E2%84%A2-Men-Gentle-Face-Wash-p-111225V","label_extra":""},{"name":"Artistry Skin Nutrition™ Correcting Serum","price":116.0,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition-Correcting-Serum-p-127020V","label_extra":""},{"name":"Artistry Studio™ Spot On Dots!","price":31.5,"url":"https://www.amway.com/en_US/Artistry-Studio%E2%84%A2-Spot-On-Dots%21-p-124816","label_extra":""},{"name":"Artistry Skin Nutrition™ Vitamin C + HA3 Daily Serum","price":66.25,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Vitamin-C-%2B-HA3-Daily-Serum-p-125517V","label_extra":""},{"name":"Artistry Skin Nutrition™ Renewing Reactivation Day Cream SPF 30","price":86.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Renewing-Reactivation-Day-Cream-SPF-30--p-123787","label_extra":""},{"name":"Artistry Skin Nutrition™ Renewing Softening Toner","price":45.0,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Renewing-Softening-Toner--p-123783V","label_extra":""},{"name":"Artistry Skin Nutrition™ Renewing Reactivation Cream","price":86.5,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Renewing-Reactivation-Cream--p-123785V","label_extra":""},{"name":"Artistry Skin Nutrition™ Hydrating Smoothing Toner","price":29.25,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Hydrating-Smoothing-Toner--p-123795V","label_extra":""},{"name":"Artistry Skin Nutrition™ Hydrating Day Lotion SPF 30","price":54.0,"url":"https://www.amway.com/en_US/Artistry-Skin-Nutrition%E2%84%A2-Hydrating-Day-Lotion-SPF-30--p-123800","label_extra":""},{"name":"Artistry Studio™ Clean Start Micellar Makeup Remover + Cleanser","price":13.0,"url":"https://www.amway.com/en_US/Artistry-Studio%E2%84%A2-Clean-Start-Micellar-Makeup-Remover-%2B-Cleanser-p-124811","label_extra":""},{"name":"Artistry Studio™ Rosé All Day Anti-Acne Toner + Pore Refresher 1% Salicylic Acid Treatment","price":23.75,"url":"https://www.amway.com/en_US/Artistry-Studio%E2%84%A2-Ros%C3%A9-All-Day-Anti-Acne-Toner-%2B-Pore-Refresher-1%25-Salicylic-Acid-Treatment-p-124813","label_extra":""},{"name":"Artistry Studio™ Pampered Pout Lip Balm + Overnight Mask","price":24.75,"url":"https://www.amway.com/en_US/Artistry-Studio%E2%84%A2-Pampered-Pout-Lip-Balm-%2B-Overnight-Mask-p-124819","label_extra":""},{"name":"Artistry Signature Select™ Hydrating Mask","price":54.0,"url":"https://www.amway.com/en_US/Artistry-Signature-Select%E2%84%A2-Hydrating-Mask-p-122343V","label_extra":""},{"name":"Artistry Signature Select™ Brightening Mask","price":59.5,"url":"https://www.amway.com/en_US/Artistry-Signature-Select%E2%84%A2-Brightening-Mask-p-122340V","label_extra":""},{"name":"Artistry Ever Perfect™ Powder Foundation Refill (other shades available)","price":32.5,"url":"https://www.amway.com/en_US/Artistry-Ever-Perfect™-Powder-Foundation---Cashmere-102-p-127833D","label_extra":""},{"name":"Artistry Ever Perfect™ Powder Foundation Compact","price":22.5,"url":"https://www.amway.com/en_US/Artistry-Ever-Perfect™-Powder-Foundation-Compact-p-127844D","label_extra":""},{"name":"Artistry Future Glow™ Serum Concealer (other shades available)","price":36.0,"url":"https://www.amway.com/en_US/Artistry-Future-Glow™-Serum-Concealer---Medium-Deep-p-127829D","label_extra":""},{"name":"Artistry Ever Perfect™ Smoothing Primer","price":44.0,"url":"https://www.amway.com/en_US/Artistry-Ever-Perfect™-Smoothing-Primer-p-127831D","label_extra":""},{"name":"Artistry Go Vibrant™ 3-in-1 Volume Mascara","price":33.75,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-3-in-1-Volume-Mascara-p-127845D","label_extra":""},{"name":"Artistry Go Vibrant™ Waterproof Length Serum Mascara","price":33.75,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant%E2%84%A2-Waterproof-Length-Serum-Mascara-p-126740D","label_extra":""},{"name":"Artistry Ever Perfect™ Longwearing Foundation (other shades available)","price":50.75,"url":"https://www.amway.com/en_US/Artistry-Ever-Perfect™-Longwearing-Foundation---Honey-203-p-127455","label_extra":""},{"name":"Artistry Ever Perfect™ Loose Setting Powder (other shades available)","price":46.0,"url":"https://www.amway.com/en_US/Artistry-Ever-Perfect™-Loose-Setting-Powder---Medium-to-Deep-p-127468D","label_extra":""},{"name":"Artistry Go Vibrant™ Light Up Liquid Lip Matte (other shades available)","price":28.25,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Light-Up-Liquid-Lip-Matte---Pepper-Pout-203-p-127478D","label_extra":""},{"name":"Artistry Go Vibrant™ Cream & Powder Blush (other shades available)","price":44.0,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Cream-%26-Powder-Blush---Pink-Spring-Fling-p-127473D","label_extra":""},{"name":"Artistry Go Vibrant™ Eyeshadow Quad (other shades available)","price":46.0,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Eyeshadow-Quad---Berry-Garden-p-126738","label_extra":""},{"name":"Artistry Go Vibrant™ Light Up Liquid Lip Glow (other shades available)","price":28.25,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Light-Up-Liquid-Lip-Glow---Fuchsia-Bloom-105-p-127601D","label_extra":""},{"name":"Artistry Go Vibrant™ Light Up Liquid Lip Plumper","price":28.25,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Light-Up-Liquid-Lip-Plumper-p-127484D","label_extra":""},{"name":"Artistry Future Glow™ Foundation Brush","price":33.75,"url":"https://www.amway.com/en_US/Artistry-Future-Glow™-Foundation-Brush-p-319435","label_extra":""},{"name":"Artistry Future Glow™ Serum Foundation (other shades available)","price":52.75,"url":"https://www.amway.com/en_US/Artistry-Future-Glow™-Serum-Foundation---Mocha-401-p-126731","label_extra":""},{"name":"Artistry Future Glow™ Pressed Powder","price":41.5,"url":"https://www.amway.com/en_US/Artistry-Future-Glow™-Pressed-Powder-p-126735D","label_extra":""},{"name":"Artistry Go Vibrant™ Waterproof Brow Pencil and Tinted Gel (other shades available)","price":30.25,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Waterproof-Brow-Pencil-and-Tinted-Gel---Dark-Brown-p-126747D","label_extra":""},{"name":"Artistry Go Vibrant™ Waterproof Pencil Eyeliner (other shades available)","price":28.25,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Waterproof-Pencil-Eyeliner---Natural-Black-p-126744D","label_extra":""},{"name":"Artistry Go Vibrant™ Longwearing Liquid Eyeliner","price":29.25,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Longwearing-Liquid-Eyeliner-p-126743D","label_extra":""},{"name":"Artistry Go Vibrant™ Matte Lipstick (other shades available)","price":31.5,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Matte-Lipstick---Blush-Crush-207-p-124161D","label_extra":""},{"name":"Artistry Go Vibrant™ Cream Lipstick (other shades available)","price":31.5,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Cream-Lipstick---Saturday-Peach-101-p-124144D","label_extra":""},{"name":"Artistry Go Vibrant™ Sheer Lip Balm","price":32.5,"url":"https://www.amway.com/en_US/Artistry-Go-Vibrant™-Sheer-Lip-Balm-p-124674D","label_extra":""},{"name":"Artistry Studio™ Mascara Base Primer","price":28.25,"url":"https://www.amway.com/en_US/Artistry-Studio™-Mascara-Base-Primer--p-123038D","label_extra":""},{"name":"Artistry™ Brush Set","price":90.0,"url":"https://www.amway.com/en_US/Artistry™-Brush-Set-p-110858","label_extra":""},{"name":"Artistry™ Makeup Perfecting Sponge","price":20.25,"url":"https://www.amway.com/en_US/Artistry™-Makeup-Perfecting-Sponge-p-763778","label_extra":""},{"name":"Artistry Ideal Radiance™ Illuminating CC Cream – Dark (No Longer Available; only shade with its own page)","price":38.0,"url":"https://www.amway.com/en_US/Artistry-Ideal-Radiance™-Illuminating-CC-Cream-–-Dark-p-120561","label_extra":""},{"name":"Artistry™ Men Unknown Eau de Parfum Spray","price":127.0,"url":"https://www.amway.com/en_US/Artistry™-Men-Unknown-Eau-de-Parfum-Spray-p-120549D","label_extra":""},{"name":"Artistry Flora Chic™ Eau de Parfum Spray","price":129.0,"url":"https://www.amway.com/en_US/Artistry-Flora-Chic™-Eau-de-Parfum-Spray-p-119630D","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"},{"name":"Other","products":[{"name":"Nutriplant™ AG – 30 Gallons","price":3531.92,"url":"https://www.amway.com/en_US/Nutriplant%E2%84%A2-AG-%E2%80%93-30-Gallons-p-603481","label_extra":""},{"name":"Nutriplant™ AG – 2.5 Gallons","price":357.22,"url":"https://www.amway.com/en_US/Nutriplant%E2%84%A2-AG-%E2%80%93-2-5-Gallons-p-603480","label_extra":""},{"name":"Nutriplant™ AG* - 260 Gallon Tote Container","price":30608.56,"url":"https://www.amway.com/en_US/Nutriplant%E2%84%A2-AG---260-Gallon-Tote-Container-p-314952","label_extra":""},{"name":"Nutriplant™ SD 25 lb. Bucket","price":978.38,"url":"https://www.amway.com/en_US/Nutriplant%E2%84%A2-SD-25-lb-Bucket-p-603479","label_extra":""},{"name":"Nutriplant™ SG 25 lb. Bucket","price":1194.62,"url":"https://www.amway.com/en_US/Nutriplant%E2%84%A2-SG-25-lb-Bucket-p-316220","label_extra":""},{"name":"Nutriplant™ SL – 2.5 Gallons","price":636.0,"url":"https://www.amway.com/en_US/Nutriplant%E2%84%A2-SL-%E2%80%93-2-5-Gallons-p-705379","label_extra":""},{"name":"APSA-80™ Concentrated Adjuvant* (other sizes available)","price":259.7,"url":"https://www.amway.com/en_US/APSA-80%E2%84%A2-Concentrated-Adjuvant-%E2%80%93-2-5-Gallons-p-603562","label_extra":""},{"name":"Amway™ Catalogs 2026-2027, Single (other versions available)","price":7.0,"url":"https://www.amway.com/en_US/Amway%E2%84%A2-Catalogs-2026-2027%2C-Single-%E2%80%93-English-p-128525","label_extra":""},{"name":"Amway™ Catalogs 2026-2027, 3-Pack (other versions available)","price":19.0,"url":"https://www.amway.com/en_US/Amway%E2%84%A2-Catalogs-2026-2027%2C-3-Pack-%E2%80%93-English-p-128524","label_extra":""}],"anything_else":"Anything else in this category you use that isn't listed above?"}],"final":{"section_title":"Your Shop Ahead Plan","description":"You're always in control.\nYour Shop Ahead plan is meant to make reordering easier, not lock you into anything. You can review and adjust your DITTO schedule through your account as your needs change. For security, please do not enter any credit card or payment information in this form.","questions":[{"title":"Would you like me to use these selections to help set up your DITTO schedule?","type":"RADIO","options":["Yes, please help me set it up","I'd rather review it with you first"]},{"title":"Anything you'd like to change, clarify, or ask before we set it up?","type":"TEXT","options":[]}]}};
+const CATS = FORM_DATA.categories;
+const SCHEDULE_OPTIONS = [
+  "1 \u2014 every month",
+  "1 \u2014 every 2 months",
+  "1 \u2014 every 3 months",
+  "1 \u2014 every 6 months",
+  "2 \u2014 every month",
+  "2 \u2014 every 2 months",
+  "Just once \u2014 don't schedule it",
+  "Other"
+];
+const ACCOUNT_OPTIONS = [
+  "Yes, I'd like to be a free registered customer",
+  "I already have an account"
+];
+
+const state = {
+  name: "", email: "", phone: "", iboFirstName: "", iboLastName: "",
+  categories: new Set(),
+  selected: new Map(),
+  anythingElse: {},
+  ditto: "",
+  accountStatus: "",
+  clarify: ""
+};
+
+function $(id){ return document.getElementById(id); }
+function el(tag, cls, text){
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+function skey(cat, name){ return cat + "\u0000" + name; }
+function money(n){ return "$" + Number(n).toFixed(2); }
+function chosenCats(){ return CATS.filter(function(c){ return state.categories.has(c.name); }); }
+function orderedSelected(){
+  var out = [];
+  CATS.forEach(function(cat){
+    cat.products.forEach(function(p){
+      var s = state.selected.get(skey(cat.name, p.name));
+      if (s) out.push(s);
+    });
+  });
+  return out;
+}
+function firstName(){ var parts = state.name.trim().split(/\s+/); return parts[0] || "friend"; }
+
+/* ---------- step nav ---------- */
+var currentStep = 1;
+function showStep(n){
+  currentStep = n;
+  document.querySelectorAll(".step").forEach(function(s){ s.classList.remove("active"); });
+  $("step" + n).classList.add("active");
+  document.querySelectorAll("#progress li").forEach(function(li){
+    var k = Number(li.dataset.step);
+    li.classList.toggle("done", k < n);
+    li.classList.toggle("current", k === n);
+  });
+  document.body.classList.toggle("has-sticky", n === 2);
+  $("sticky").hidden = (n !== 2);
+  if (n === 2) renderStep2();
+  if (n === 3) renderStep3();
+  if (n === 4) renderStep4();
+  window.scrollTo(0, 0);
+}
+
+/* ---------- step 1 ---------- */
+function initStep1(){
+  var box = $("step1Cats");
+  var frag = document.createDocumentFragment();
+  CATS.forEach(function(cat){
+    var lab = el("label", "catcheck");
+    var cb = document.createElement("input");
+    cb.type = "checkbox"; cb.value = cat.name;
+    cb.addEventListener("change", function(){
+      if (cb.checked) state.categories.add(cat.name);
+      else state.categories.delete(cat.name);
+      $("catErr").textContent = "";
+    });
+    lab.appendChild(cb);
+    lab.appendChild(el("span", null, cat.name));
+    frag.appendChild(lab);
+  });
+  box.appendChild(frag);
+}
+function fieldValid(inputId, errId, ok, msg){
+  var input = $(inputId);
+  input.classList.remove("invalid"); $(errId).textContent = "";
+  if (!ok){ input.classList.add("invalid"); $(errId).textContent = msg; }
+  return ok;
+}
+function validStep1(){
+  state.name = $("name").value.trim();
+  state.email = $("email").value.trim();
+  state.phone = $("phone").value.trim();
+  state.iboFirstName = $("iboFirst").value.trim();
+  state.iboLastName = $("iboLast").value.trim();
+  var ok = true;
+  ok = fieldValid("name", "nameErr", !!state.name, "Please enter your name.") && ok;
+  ok = fieldValid("email", "emailErr", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email), "Please enter a valid email.") && ok;
+  ok = fieldValid("phone", "phoneErr", !!state.phone, "Please enter your phone number.") && ok;
+  ok = fieldValid("iboFirst", "iboFirstErr", !!state.iboFirstName, "Please enter your IBO's first name.") && ok;
+  ok = fieldValid("iboLast", "iboLastErr", !!state.iboLastName, "Please enter your IBO's last name.") && ok;
+  if (state.categories.size === 0){ $("catErr").textContent = "Choose at least one category."; ok = false; }
+  else $("catErr").textContent = "";
+  if (ok){
+    state.selected.forEach(function(s, k){ if (!state.categories.has(s.category)) state.selected.delete(k); });
+    Object.keys(state.anythingElse).forEach(function(c){ if (!state.categories.has(c)) delete state.anythingElse[c]; });
+  }
+  return ok;
+}
+
+/* ---------- step 2 ---------- */
+function renderStep2(){
+  var body = $("step2Body");
+  body.textContent = "";
+  var frag = document.createDocumentFragment();
+  chosenCats().forEach(function(cat, ci){
+    var card = el("section", "card");
+    card.appendChild(el("h3", null, cat.name));
+    var search = document.createElement("input");
+    search.type = "search";
+    search.placeholder = "Search " + cat.name + " products";
+    search.setAttribute("aria-label", "Search " + cat.name + " products");
+    card.appendChild(search);
+    var list = el("div", "prodlist");
+    var rows = [];
+    cat.products.forEach(function(p, pi){
+      var row = el("div", "prodrow");
+      var lab = document.createElement("label");
+      lab.style.cssText = "display:flex;align-items:center;gap:10px;flex:1;cursor:pointer";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.id = "p-" + ci + "-" + pi;
+      cb.checked = state.selected.has(skey(cat.name, p.name));
+      cb.addEventListener("change", function(){
+        var k = skey(cat.name, p.name);
+        if (cb.checked) state.selected.set(k, {category: cat.name, name: p.name, price: p.price, url: p.url, schedule: "", note: ""});
+        else state.selected.delete(k);
+        updateSticky();
+      });
+      var nameSpan = el("span", "pname", p.name + (p.label_extra ? " " + p.label_extra : ""));
+      lab.appendChild(cb); lab.appendChild(nameSpan);
+      row.appendChild(lab);
+      row.appendChild(el("span", "pprice", money(p.price)));
+      var view = document.createElement("a");
+      view.className = "view"; view.href = p.url; view.target = "_blank"; view.rel = "noopener";
+      view.textContent = "View";
+      row.appendChild(view);
+      row.dataset.pname = p.name.toLowerCase();
+      list.appendChild(row);
+      rows.push(row);
+    });
+    search.addEventListener("input", function(){
+      var q = search.value.trim().toLowerCase();
+      rows.forEach(function(r){ r.style.display = (!q || r.dataset.pname.indexOf(q) !== -1) ? "" : "none"; });
+    });
+    card.appendChild(list);
+    var elseWrap = el("div", "elsebox");
+    var elseLab = el("label", null, "Anything else in this category you use that isn't listed above?");
+    var elseInput = document.createElement("input");
+    elseInput.type = "text";
+    elseInput.placeholder = "Optional";
+    elseInput.value = state.anythingElse[cat.name] || "";
+    elseInput.addEventListener("input", function(){
+      var v = elseInput.value.trim();
+      if (v) state.anythingElse[cat.name] = v; else delete state.anythingElse[cat.name];
+    });
+    elseWrap.appendChild(elseLab); elseWrap.appendChild(elseInput);
+    card.appendChild(elseWrap);
+    frag.appendChild(card);
+  });
+  body.appendChild(frag);
+  updateSticky();
+}
+function updateSticky(){
+  var n = state.selected.size;
+  $("selCount").textContent = n + (n === 1 ? " product selected" : " products selected");
+  $("stickyContinue").disabled = (n === 0);
+}
+
+/* ---------- step 3 ---------- */
+function renderStep3(){
+  var body = $("step3Body");
+  body.textContent = "";
+  $("schedErr").textContent = "";
+  var frag = document.createDocumentFragment();
+  chosenCats().forEach(function(cat){
+    var items = orderedSelected().filter(function(s){ return s.category === cat.name; });
+    if (!items.length) return;
+    frag.appendChild(el("h3", null, cat.name));
+    items.forEach(function(s, idx){
+      var card = el("section", "card");
+      card.dataset.skey = skey(s.category, s.name);
+      var head = el("div", "prodhead");
+      head.appendChild(el("span", "pname", s.name + " \u2014 " + money(s.price)));
+      var view = document.createElement("a");
+      view.className = "view"; view.href = s.url; view.target = "_blank"; view.rel = "noopener";
+      view.textContent = "View";
+      head.appendChild(view);
+      var x = el("button", "xbtn", "\u00D7");
+      x.type = "button"; x.title = "Remove this product"; x.setAttribute("aria-label", "Remove " + s.name);
+      x.addEventListener("click", function(){
+        state.selected.delete(skey(s.category, s.name));
+        renderStep3();
+      });
+      head.appendChild(x);
+      card.appendChild(head);
+      var groupName = "sc-" + Math.random().toString(36).slice(2) + idx;
+      var noteWrap = el("div", "othernote");
+      SCHEDULE_OPTIONS.forEach(function(opt){
+        var lab = el("label", "opt");
+        var r = document.createElement("input");
+        r.type = "radio"; r.name = groupName; r.value = opt;
+        r.checked = (s.schedule === opt);
+        r.addEventListener("change", function(){
+          s.schedule = opt;
+          noteWrap.classList.toggle("hidden", opt !== "Other");
+          card.classList.remove("missing");
+          $("schedErr").textContent = "";
+        });
+        lab.appendChild(r);
+        lab.appendChild(el("span", null, opt));
+        card.appendChild(lab);
+      });
+      noteWrap.classList.toggle("hidden", s.schedule !== "Other");
+      var noteLab = el("label", "f-label", "Tell us how many and how often");
+      noteLab.style.marginTop = "6px";
+      var noteInput = document.createElement("input");
+      noteInput.type = "text";
+      noteInput.placeholder = "e.g. 2 every 3 months";
+      noteInput.value = s.note || "";
+      noteInput.addEventListener("input", function(){ s.note = noteInput.value.trim(); });
+      noteWrap.appendChild(noteLab); noteWrap.appendChild(noteInput);
+      card.appendChild(noteWrap);
+      frag.appendChild(card);
+    });
+  });
+  body.appendChild(frag);
+}
+function validStep3(){
+  var ok = true, firstMissing = null;
+  document.querySelectorAll("#step3Body .card").forEach(function(card){
+    var s = state.selected.get(card.dataset.skey);
+    if (!s || !s.schedule){ card.classList.add("missing"); ok = false; if (!firstMissing) firstMissing = card; }
+  });
+  if (!ok){
+    $("schedErr").textContent = "Please choose a schedule for every product \u2014 the ones that still need an answer are highlighted.";
+    if (firstMissing) firstMissing.scrollIntoView({behavior: "smooth", block: "center"});
+  }
+  return ok;
+}
+
+/* ---------- step 4 ---------- */
+function planTextLines(){
+  var lines = [];
+  lines.push("My Shop Ahead plan");
+  lines.push("Name: " + state.name);
+  lines.push("Email: " + state.email);
+  lines.push("Phone: " + state.phone);
+  lines.push("My IBO: " + state.iboFirstName + " " + state.iboLastName);
+  lines.push("");
+  chosenCats().forEach(function(cat){
+    var items = orderedSelected().filter(function(s){ return s.category === cat.name; });
+    if (!items.length && !state.anythingElse[cat.name]) return;
+    lines.push(cat.name);
+    items.forEach(function(s){
+      var line = "- " + s.name + " \u2014 " + money(s.price) + " \u2014 " + s.schedule;
+      if (s.schedule === "Other" && s.note) line += " (" + s.note + ")";
+      lines.push(line);
+    });
+    if (state.anythingElse[cat.name]) lines.push("Also uses: " + state.anythingElse[cat.name]);
+    lines.push("");
+  });
+  if (state.ditto) lines.push("DITTO setup: " + state.ditto);
+  if (state.accountStatus) lines.push("Registered customer: " + state.accountStatus);
+  if (state.clarify) lines.push("Notes: " + state.clarify);
+  return lines;
+}
+function radioCard(title, options, groupName, current, errId, onPick){
+  var card = el("div", "card");
+  card.appendChild(el("label", "f-label", title + " *"));
+  options.forEach(function(opt){
+    var lab = el("label", "opt");
+    var r = document.createElement("input");
+    r.type = "radio"; r.name = groupName; r.value = opt;
+    r.checked = (current === opt);
+    r.addEventListener("change", function(){ onPick(opt); $(errId).textContent = ""; });
+    lab.appendChild(r); lab.appendChild(el("span", null, opt));
+    card.appendChild(lab);
+  });
+  var p = el("p", "fmsg", ""); p.setAttribute("id", errId);
+  card.appendChild(p);
+  return card;
+}
+function renderStep4(){
+  var body = $("step4Body");
+  body.textContent = "";
+  var frag = document.createDocumentFragment();
+
+  var closing = el("div", "closing");
+  FORM_DATA.final.description.split("\n").forEach(function(p){
+    closing.appendChild(el("p", null, p.trim()));
+  });
+  frag.appendChild(closing);
+
+  var dq = FORM_DATA.final.questions[0];
+  frag.appendChild(radioCard(dq.title, dq.options, "ditto", state.ditto, "dittoErr", function(o){ state.ditto = o; }));
+
+  frag.appendChild(radioCard("Are you a registered customer?", ACCOUNT_OPTIONS, "accountStatus", state.accountStatus, "acctErr",
+    function(o){ state.accountStatus = o; }));
+
+  var cq = FORM_DATA.final.questions[1];
+  var ccard = el("div", "card");
+  var clab = el("label", "f-label", cq.title);
+  clab.setAttribute("for", "clarify");
+  ccard.appendChild(clab);
+  var cta = document.createElement("textarea");
+  cta.id = "clarify"; cta.rows = 4;
+  cta.placeholder = "Optional";
+  cta.value = state.clarify || "";
+  cta.addEventListener("input", function(){ state.clarify = cta.value; });
+  ccard.appendChild(cta);
+  frag.appendChild(ccard);
+
+  var sum = el("div", "summary");
+  sum.appendChild(el("h4", null, "Your plan summary"));
+  var introUl = el("ul");
+  [["Name", state.name], ["Email", state.email], ["Phone", state.phone],
+   ["Your IBO", state.iboFirstName + " " + state.iboLastName]].forEach(function(pair){
+    var li = el("li");
+    li.appendChild(el("strong", null, pair[0] + ": "));
+    li.appendChild(document.createTextNode(pair[1]));
+    introUl.appendChild(li);
+  });
+  sum.appendChild(introUl);
+  chosenCats().forEach(function(cat){
+    var items = orderedSelected().filter(function(s){ return s.category === cat.name; });
+    if (!items.length && !state.anythingElse[cat.name]) return;
+    sum.appendChild(el("h4", null, cat.name));
+    var ul = el("ul");
+    items.forEach(function(s){
+      var t = s.name + " \u2014 " + money(s.price) + " \u2014 " + s.schedule;
+      if (s.schedule === "Other" && s.note) t += " (" + s.note + ")";
+      ul.appendChild(el("li", null, t));
+    });
+    if (state.anythingElse[cat.name]) ul.appendChild(el("li", null, "Also uses: " + state.anythingElse[cat.name]));
+    sum.appendChild(ul);
+  });
+  if (state.ditto) sum.appendChild(el("p", null, "DITTO: " + state.ditto));
+  if (state.accountStatus) sum.appendChild(el("p", null, "Registered customer: " + state.accountStatus));
+  frag.appendChild(sum);
+
+  var notice = el("div", "notice", "");
+  notice.appendChild(el("strong", null, "How your DITTO schedule works: "));
+  notice.appendChild(document.createTextNode("We’ll build your DITTO™ schedule for you. When it’s ready, we’ll notify you — then you just review and complete it on your end. We never take payment: you enter your own payment information directly with Amway, so please don’t enter any payment details in this form."));
+  frag.appendChild(notice);
+
+  var errCard = el("div", "errcard hidden", "");
+  errCard.id = "sendErr";
+  errCard.appendChild(el("h3", null, "We couldn't send your plan \u2014 let's fix that."));
+  var errMsg = el("p", null, ""); errMsg.id = "sendErrMsg"; errCard.appendChild(errMsg);
+  var retry = el("button", "btn btn-primary", "Try sending again");
+  retry.type = "button"; retry.id = "retryBtn";
+  retry.addEventListener("click", function(){ submitPlan(); });
+  errCard.appendChild(retry);
+  var mailp = el("p", null, ""); mailp.style.marginTop = "12px";
+  mailp.appendChild(document.createTextNode("Or "));
+  var mailLink = document.createElement("a");
+  mailLink.id = "mailtoFallback"; mailLink.href = "#";
+  mailLink.textContent = "send your plan by email instead";
+  mailp.appendChild(mailLink);
+  errCard.appendChild(mailp);
+  frag.appendChild(errCard);
+
+  var row = el("div", "btnrow");
+  var back = el("button", "btn btn-ghost", "Back"); back.type = "button";
+  back.addEventListener("click", function(){ showStep(3); });
+  var submit = el("button", "btn btn-primary", "Submit my plan"); submit.type = "button"; submit.id = "submitBtn";
+  submit.addEventListener("click", function(){ submitPlan(); });
+  row.appendChild(back); row.appendChild(submit);
+  frag.appendChild(row);
+  body.appendChild(frag);
+}
+
+/* ---------- submit (proven flow) ---------- */
+function buildPayload(){
+  return {
+    name: state.name,
+    email: state.email,
+    phone: state.phone,
+    iboFirstName: state.iboFirstName,
+    iboLastName: state.iboLastName,
+    categories: chosenCats().map(function(c){ return c.name; }),
+    selections: orderedSelected().map(function(s){
+      return {category: s.category, name: s.name, price: s.price, schedule: s.schedule,
+              scheduleNote: (s.schedule === "Other") ? (s.note || "") : ""};
+    }),
+    anythingElse: Object.assign({}, state.anythingElse),
+    ditto: state.ditto,
+    accountStatus: state.accountStatus,
+    clarify: (state.clarify || "").trim()
+  };
+}
+async function postPlan(payload){
+  var lastErr = null;
+  for (var attempt = 0; attempt < 3; attempt++){
+    try{
+      var resp = await fetch(ENDPOINT, {
+        method: "POST",
+        mode: "cors",
+        headers: {"Content-Type": "text/plain"},
+        body: JSON.stringify(payload),
+        redirect: "follow"
+      });
+      if (!resp.ok){ lastErr = new Error("The server returned HTTP " + resp.status + "."); continue; }
+      var data = await resp.json();
+      if (data && data.ok === true) return {ok: true};
+      lastErr = new Error("The server gave an unexpected reply.");
+    }catch(e){
+      lastErr = e;
+    }
+    if (attempt < 2) await new Promise(function(r){ setTimeout(r, 1000 * (attempt + 1)); });
+  }
+  return {ok: false, error: lastErr};
+}
+async function submitPlan(){
+  if (!state.ditto){
+    $("dittoErr").textContent = "Please choose one.";
+    $("dittoErr").scrollIntoView({behavior: "smooth", block: "center"});
+    return;
+  }
+  if (!state.accountStatus){
+    $("acctErr").textContent = "Please choose one.";
+    $("acctErr").scrollIntoView({behavior: "smooth", block: "center"});
+    return;
+  }
+  state.clarify = $("clarify") ? $("clarify").value : state.clarify;
+  var btn = $("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "Sending\u2026";
+  $("sendErr").classList.add("hidden");
+  var payload = buildPayload();
+  var result = await postPlan(payload);
+  if (result.ok){
+    document.body.classList.remove("has-sticky");
+    $("sticky").hidden = true;
+    document.querySelectorAll(".step").forEach(function(s){ s.classList.remove("active"); });
+    $("thanks").classList.add("active");
+    $("thanksTitle").textContent = "Mahalo, " + firstName() + "! Your Shop Ahead plan is in \u2014 we'll be in touch to set up your DITTO schedule.";
+    window.scrollTo(0, 0);
+  } else {
+    btn.disabled = false;
+    btn.textContent = "Submit my plan";
+    var detail = (result.error && result.error.message) ? result.error.message : "a connection problem stopped it.";
+    $("sendErrMsg").textContent = "Your plan wasn't sent \u2014 " + detail + " Your selections are safe on this page; nothing was lost.";
+    var subject = "My Shop Ahead plan";
+    $("mailtoFallback").href = "mailto:" + MAILTO_TO + "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(planTextLines().join("\n"));
+    $("sendErr").classList.remove("hidden");
+    $("sendErr").scrollIntoView({behavior: "smooth", block: "center"});
+  }
+}
+
+/* ---------- wire up ---------- */
+document.addEventListener("DOMContentLoaded", function(){
+  initStep1();
+  $("toStep2").addEventListener("click", function(){ if (validStep1()) showStep(2); });
+  $("stickyContinue").addEventListener("click", function(){ if (state.selected.size > 0) showStep(3); });
+  $("toStep4").addEventListener("click", function(){ if (validStep3()) showStep(4); });
+  document.querySelectorAll("[data-back]").forEach(function(b){
+    b.addEventListener("click", function(){ showStep(Number(b.dataset.back)); });
+  });
+});
+
+</script>
+</body>
+</html>
