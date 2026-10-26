@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Receipt Tool</title>
+    <style>
+      :root{
+        color-scheme: light dark;
+        --bg:#f2efe8;
+        --surface:#fffdf8;
+        --surface-2:#f7f4ec;
+        --ink:#1d2421;
+        --muted:#5f6d66;
+        --faint:#8a968f;
+        --line:#ddd7c8;
+        --accent:#0d6b4c;
+        --accent-strong:#095239;
+        --accent-ink:#ffffff;
+        --fee-bg:#fdf0dc;
+        --fee-ink:#92580a;
+        --special-bg:#fbe7e4;
+        --special-ink:#a92c1e;
+        --paper:#fffef9;
+        --paper-ink:#22271f;
+        --shadow:0 1px 2px rgba(29,36,33,.06),0 8px 24px rgba(29,36,33,.07);
+        --radius:14px;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#14171a;
+          --surface:#1d2124;
+          --surface-2:#23282b;
+          --ink:#edf1ee;
+          --muted:#a3b0a8;
+          --faint:#7d8a83;
+          --line:#333a37;
+          --accent:#2fbf8f;
+          --accent-strong:#5ad3a8;
+          --accent-ink:#0c1a14;
+          --fee-bg:#3a2c12;
+          --fee-ink:#f0bd6a;
+          --special-bg:#3d1d19;
+          --special-ink:#ff9d8f;
+          --paper:#f5f1e6;
+          --paper-ink:#22271f;
+          --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.35);
+        }
+      }
+      html{ -webkit-text-size-adjust:100%; }
+      body{
+        margin:0;
+        background:var(--bg);
+        color:var(--ink);
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+        font-size:16px;
+        line-height:1.45;
+      }
+      h1,h2,h3,p{ margin:0; }
+      button{ font:inherit; cursor:pointer; }
+      input,select{ font:inherit; }
+      .wrap{ max-width:1180px; margin:0 auto; padding:18px 16px 60px; }
+
+      /* ---------- header strip ---------- */
+      .topbar{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px; margin-bottom:16px; }
+      .topbar h1{ font-size:22px; letter-spacing:-.01em; }
+      .topbar .sub{ color:var(--muted); font-size:14px; }
+      .topbar .count{ margin-left:auto; color:var(--faint); font-size:13px; }
+      .sale-banner{
+        background:var(--special-bg); color:var(--special-ink);
+        border:1px solid var(--special-ink); border-radius:var(--radius);
+        padding:12px 16px; margin-bottom:16px; text-align:center;
+      }
+      .sale-banner .big{ font-size:19px; font-weight:800; letter-spacing:.01em; }
+      .sale-banner .small{ font-size:13.5px; font-weight:600; margin-top:2px; }
+
+      /* ---------- layout ---------- */
+      .layout{ display:grid; grid-template-columns:1fr; gap:18px; align-items:start; }
+      @media (min-width:960px){
+        .layout{ grid-template-columns:minmax(0,1fr) 430px; }
+        .sale-col{ position:sticky; top:14px; }
+      }
+      .card{
+        background:var(--surface);
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+        padding:16px;
+      }
+      .card + .card{ margin-top:18px; }
+      .card h2{ font-size:15px; letter-spacing:.02em; margin-bottom:10px; }
+      .card h2 .hint{ font-weight:400; color:var(--muted); font-size:13px; letter-spacing:0; }
+
+      /* ---------- search ---------- */
+      .search-row{ display:flex; gap:8px; }
+      .search-box{ position:relative; flex:1; }
+      .search-box svg{ position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--faint); pointer-events:none; }
+      #search{
+        width:100%; box-sizing:border-box;
+        padding:13px 38px 13px 40px;
+        border:1.5px solid var(--line); border-radius:12px;
+        background:var(--surface); color:var(--ink);
+        font-size:17px;
+      }
+      #search:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:transparent; }
+      #clearSearch{
+        position:absolute; right:6px; top:50%; transform:translateY(-50%);
+        border:0; background:transparent; color:var(--faint);
+        width:30px; height:30px; border-radius:50%; font-size:17px; line-height:1; display:none;
+      }
+      .scan-btn{
+        flex:0 0 auto; display:inline-flex; align-items:center; gap:7px;
+        padding:0 14px; border-radius:12px;
+        border:1.5px solid var(--line); background:var(--surface-2); color:var(--ink);
+        font-weight:600; font-size:15px;
+      }
+      .scan-btn:active{ transform:translateY(1px); }
+      .chips{ display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+      .chip{
+        border:1px solid var(--line); background:var(--surface-2); color:var(--ink);
+        border-radius:999px; padding:6px 12px; font-size:13.5px; font-weight:600;
+      }
+      .chip.on{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+      .scan-note{
+        margin-top:12px; padding:10px 12px; border-radius:10px;
+        background:var(--fee-bg); color:var(--fee-ink); font-size:14px; display:none;
+      }
+      .scan-note.show{ display:block; }
+      .scan-note button{ margin-left:8px; border:0; background:transparent; color:inherit; font-weight:700; text-decoration:underline; padding:0; }
+
+      /* ---------- product list ---------- */
+      .results-meta{ color:var(--faint); font-size:13px; margin:14px 2px 8px; }
+      .plist{ display:flex; flex-direction:column; }
+      .prow{
+        display:flex; align-items:center; gap:10px;
+        padding:11px 4px; border-bottom:1px solid var(--line);
+      }
+      .prow:last-child{ border-bottom:0; }
+      .pinfo{ flex:1; min-width:0; }
+      .pname{ font-weight:600; font-size:15.5px; overflow-wrap:anywhere; }
+      .pmeta{ color:var(--muted); font-size:12.5px; margin-top:1px; }
+      .badges{ display:flex; flex-wrap:wrap; gap:5px; margin-top:4px; }
+      .badge{ font-size:11.5px; font-weight:700; border-radius:6px; padding:2px 7px; letter-spacing:.01em; }
+      .badge.fee{ background:var(--fee-bg); color:var(--fee-ink); }
+      .badge.special{ background:var(--special-bg); color:var(--special-ink); }
+      .badge.sale{ background:var(--special-ink); color:#fff; }
+      .pprice{ text-align:right; flex:0 0 auto; }
+      .pprice .now{ font-weight:700; font-size:16px; white-space:nowrap; }
+      .pprice .was{ color:var(--faint); font-size:13px; text-decoration:line-through; white-space:nowrap; display:block; }
+      .add-btn{
+        flex:0 0 auto; border:0; border-radius:10px;
+        background:var(--accent); color:var(--accent-ink);
+        font-weight:700; padding:10px 16px; font-size:15px; min-width:64px;
+      }
+      .add-btn:active{ background:var(--accent-strong); }
+      .link-btn{
+        flex:0 0 auto; border:1.5px dashed var(--fee-ink); border-radius:10px;
+        background:transparent; color:var(--fee-ink);
+        font-weight:700; padding:9px 12px; font-size:14px;
+      }
+      .stepper{ display:inline-flex; align-items:center; gap:2px; flex:0 0 auto; }
+      .stepper button{
+        width:36px; height:36px; border-radius:10px; border:1px solid var(--line);
+        background:var(--surface-2); color:var(--ink); font-size:19px; font-weight:700; line-height:1;
+      }
+      .stepper .q{ min-width:30px; text-align:center; font-weight:700; font-size:16px; }
+      .empty-note{ color:var(--muted); padding:18px 4px; font-size:15px; }
+
+      /* ---------- custom item ---------- */
+      .custom-grid{ display:grid; grid-template-columns:1fr 110px 74px auto; gap:8px; }
+      @media (max-width:560px){ .custom-grid{ grid-template-columns:1fr 96px; } }
+      .field label{ display:block; font-size:12.5px; font-weight:700; color:var(--muted); margin-bottom:4px; letter-spacing:.02em; }
+      .field input{
+        width:100%; box-sizing:border-box; padding:10px 11px;
+        border:1.5px solid var(--line); border-radius:10px;
+        background:var(--surface); color:var(--ink); font-size:16px;
+      }
+      .field input:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:transparent; }
+      .custom-grid .add-btn{ align-self:end; height:44px; }
+
+      /* ---------- cart ---------- */
+      .cline{ display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px dashed var(--line); }
+      .cline:last-of-type{ border-bottom:0; }
+      .cline .cinfo{ flex:1; min-width:0; }
+      .cline .cname{ font-weight:600; font-size:15px; overflow-wrap:anywhere; }
+      .cline .cdetail{ color:var(--muted); font-size:13px; margin-top:1px; }
+      .cline .cdetail .was{ text-decoration:line-through; }
+      .cline .camt{ font-weight:700; white-space:nowrap; font-size:15px; padding-top:2px; }
+      .cline .rm{
+        border:0; background:transparent; color:var(--faint); font-size:18px;
+        width:30px; height:30px; border-radius:8px; flex:0 0 auto; line-height:1;
+      }
+      .cline .rm:active{ color:var(--special-ink); }
+      .cline .stepper button{ width:32px; height:32px; font-size:17px; }
+      .cline .stepper{ margin-top:6px; }
+
+      /* ---------- sale controls ---------- */
+      .ctl-row{ display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; }
+      .ctl{ flex:1; min-width:130px; }
+      .ctl label{ display:block; font-size:12.5px; font-weight:700; color:var(--muted); margin-bottom:5px; letter-spacing:.02em; }
+      .pct-wrap{ display:flex; align-items:center; gap:6px; }
+      .pct-wrap input{
+        width:76px; box-sizing:border-box; padding:9px 10px;
+        border:1.5px solid var(--line); border-radius:10px;
+        background:var(--surface); color:var(--ink); font-size:16px;
+      }
+      .pct-wrap input:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:transparent; }
+      .pct-wrap span{ color:var(--muted); font-weight:600; }
+      .disc-chips{ display:flex; gap:5px; margin-top:7px; flex-wrap:wrap; }
+      .disc-chips button{
+        border:1px solid var(--line); background:var(--surface-2); color:var(--ink);
+        border-radius:8px; padding:4px 9px; font-size:13px; font-weight:600;
+      }
+      .disc-chips button.on{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+      .seg{ display:flex; flex-wrap:wrap; gap:6px; }
+      .seg button{
+        border:1.5px solid var(--line); background:var(--surface-2); color:var(--ink);
+        border-radius:10px; padding:9px 13px; font-weight:600; font-size:14.5px;
+      }
+      .seg button.on{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+      .cust-grid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:14px; }
+      @media (min-width:480px){ .cust-grid{ grid-template-columns:1fr 1fr; } .cust-grid .wide{ grid-column:1 / -1; } }
+
+      /* ---------- totals ---------- */
+      .totals{ margin-top:14px; border-top:2px solid var(--line); padding-top:10px; }
+      .trow{ display:flex; justify-content:space-between; gap:12px; padding:3px 0; font-size:15px; }
+      .trow .tl{ color:var(--muted); }
+      .trow .tv{ font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; }
+      .trow.grand{ font-size:20px; padding-top:8px; margin-top:6px; border-top:1px solid var(--line); }
+      .trow.grand .tl{ color:var(--ink); font-weight:700; }
+      .trow.grand .tv{ font-weight:800; }
+      .trow .neg{ color:var(--special-ink); }
+
+      /* ---------- receipt paper ---------- */
+      .receipt-paper{
+        background:var(--paper); color:var(--paper-ink);
+        border-radius:6px; padding:20px 18px 16px;
+        font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+        font-size:13.5px; line-height:1.55;
+        box-shadow:0 1px 0 rgba(0,0,0,.08),0 10px 22px rgba(0,0,0,.13);
+        position:relative;
+      }
+      .receipt-paper::after{
+        content:""; position:absolute; left:0; right:0; bottom:-7px; height:7px;
+        background:linear-gradient(-45deg,transparent 8px,var(--paper) 0) 0 0/14px 14px repeat-x,
+                   linear-gradient(45deg,transparent 8px,var(--paper) 0) 7px 0/14px 14px repeat-x;
+        transform:rotate(180deg);
+      }
+      .receipt-paper .r-head{ text-align:center; margin-bottom:4px; }
+      .receipt-paper .r-seller{ font-weight:700; font-size:15px; letter-spacing:.01em; }
+      .receipt-paper .r-sub{ font-size:12px; }
+      .receipt-paper .r-rule{ border-top:1.5px dashed #9a9587; margin:9px 0; }
+      .receipt-paper .r-line{ display:flex; justify-content:space-between; gap:14px; }
+      .receipt-paper .r-line .rl{ overflow-wrap:anywhere; }
+      .receipt-paper .r-line .rv{ white-space:nowrap; font-variant-numeric:tabular-nums; }
+      .receipt-paper .r-detail{ font-size:12px; padding-left:12px; }
+      .receipt-paper .r-total{ font-size:16.5px; font-weight:700; }
+      .receipt-paper .r-foot{ text-align:center; margin-top:4px; font-size:12.5px; }
+      .receipt-paper .strike{ text-decoration:line-through; }
+
+      .send-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+      .send-btn{
+        flex:1; min-width:130px; border:0; border-radius:11px; padding:13px 12px;
+        background:var(--accent); color:var(--accent-ink); font-weight:700; font-size:15.5px;
+        text-decoration:none; text-align:center;
+      }
+      .send-btn:active{ background:var(--accent-strong); }
+      .ghost-btn{
+        border:1.5px solid var(--line); background:var(--surface-2); color:var(--ink);
+        border-radius:11px; padding:12px 14px; font-weight:600; font-size:14.5px;
+      }
+      .send-err{ color:var(--special-ink); font-size:14px; margin-top:8px; min-height:1.2em; }
+      .send-status{
+        display:none; margin-top:10px; padding:10px 12px; border-radius:10px;
+        background:var(--surface-2); border:1.5px solid var(--accent); color:var(--ink);
+        font-size:14px; font-weight:600; line-height:1.4;
+      }
+      .send-status:not(:empty){ display:block; }
+      .send-hint{ font-size:13.5px; color:var(--muted); line-height:1.4; }
+      .new-sale{
+        width:100%; margin-top:10px; border:1.5px solid var(--line);
+        background:transparent; color:var(--muted);
+        border-radius:11px; padding:11px; font-weight:700; font-size:15px;
+      }
+
+      @media (min-width:960px){ .wrap{ padding-bottom:40px; } }
+
+      /* ---------- scan overlay + toast ---------- */
+      .scan-overlay{
+        position:fixed; inset:0; z-index:60; background:rgba(10,12,11,.92);
+        display:none; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:20px;
+      }
+      .scan-overlay.show{ display:flex; }
+      .scan-overlay video{ width:min(92vw,480px); border-radius:14px; background:#000; }
+      .scan-overlay p{ color:#e8ece9; font-size:15px; text-align:center; max-width:420px; }
+      .scan-overlay .close-scan{
+        border:0; border-radius:11px; padding:12px 22px; font-weight:700;
+        background:#fff; color:#14181a; font-size:15px;
+      }
+      .toast{
+        position:fixed; left:50%; bottom:86px; transform:translateX(-50%) translateY(20px);
+        background:var(--ink); color:var(--bg); padding:11px 18px; border-radius:999px;
+        font-weight:600; font-size:14.5px; opacity:0; pointer-events:none; transition:all .25s ease;
+        z-index:70; max-width:88vw; text-align:center;
+      }
+      @media (min-width:960px){ .toast{ bottom:28px; } }
+      .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+      @media (prefers-reduced-motion: reduce){ .toast{ transition:none; } }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <h1>Receipt Tool</h1>
+        <span class="sub">Checkout desk · Jaron and Codie Vergara</span>
+        <span class="count" id="catalogCount"></span>
+      </div>
+
+      <div class="sale-banner" role="note">
+        <div class="big" id="saleBannerBig">EXPO DAY — 10% OFF ALL PRICES</div>
+        <div class="small" id="saleBannerSmall">Sunday, November 8, 2026 only · Healthy Home Holiday Expo · The 10% discount turns on automatically on Nov 8 — regular prices until then</div>
+      </div>
+
+      <div class="layout">
+        <!-- ============ LEFT: find products ============ -->
+        <div class="find-col">
+          <section class="card" aria-label="Find products">
+            <div class="search-row">
+              <div class="search-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+                <input id="search" type="search" inputmode="search" autocomplete="off" placeholder="Search the catalog — try “XS”, “SA8”, “Double X”, or a SKU…" aria-label="Search products" />
+                <button id="clearSearch" type="button" aria-label="Clear search">×</button>
+              </div>
+              <button class="scan-btn" id="scanBtn" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M4 12h16"/></svg>
+                Scan
+              </button>
+            </div>
+            <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+            <div class="scan-note" id="scanNote"></div>
+            <div class="results-meta" id="resultsMeta"></div>
+            <div class="plist" id="plist"></div>
+          </section>
+
+          <section class="card" aria-label="Add a custom item">
+            <h2>Add an item by hand <span class="hint">— for anything not in the list</span></h2>
+            <div class="custom-grid">
+              <div class="field">
+                <label for="cName">Item name</label>
+                <input id="cName" type="text" autocomplete="off" placeholder="e.g. Gift wrapping" />
+              </div>
+              <div class="field">
+                <label for="cPrice">Price $</label>
+                <input id="cPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+              </div>
+              <div class="field">
+                <label for="cQty">Qty</label>
+                <input id="cQty" type="number" min="1" step="1" inputmode="numeric" value="1" />
+              </div>
+              <button class="add-btn" id="cAdd" type="button">Add</button>
+            </div>
+          </section>
+        </div>
+
+        <!-- ============ RIGHT: sale + receipt ============ -->
+        <div class="sale-col">
+          <section class="card" id="saleCard" aria-label="Current sale">
+            <h2>Current sale</h2>
+            <div id="cartLines"></div>
+
+            <div class="ctl-row">
+              <div class="ctl">
+                <label for="discountPct">Discount — 10% off auto-applies Nov 8 only</label>
+                <div class="pct-wrap">
+                  <input id="discountPct" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="0" />
+                  <span>% off</span>
+                </div>
+                <div class="disc-chips" id="discChips"></div>
+              </div>
+              <div class="ctl">
+                <label for="taxRate">Tax — Hawaiʻi GET</label>
+                <div class="pct-wrap">
+                  <input id="taxRate" type="number" min="0" max="30" step="0.001" inputmode="decimal" value="4.667" />
+                  <span>%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ctl" style="margin-top:14px">
+              <label>Payment method <span style="font-weight:400;text-transform:none;letter-spacing:0">(charged separately)</span></label>
+              <div class="seg" id="paySeg">
+                <button type="button" data-pay="Credit Card" class="on">Credit Card</button>
+                <button type="button" data-pay="Venmo">Venmo</button>
+                <button type="button" data-pay="Apple Pay">Apple Pay</button>
+                <button type="button" data-pay="Other">Other</button>
+              </div>
+            </div>
+
+            <div class="cust-grid">
+              <div class="field wide">
+                <label for="custName">Sold to</label>
+                <input id="custName" type="text" autocomplete="off" placeholder="Customer name" />
+              </div>
+              <div class="field">
+                <label for="custContact">Customer email or mobile number</label>
+                <input id="custContact" type="text" autocomplete="off" placeholder="Email for email · mobile number for text" />
+              </div>
+              <div class="field">
+                <label>Sending the receipt</label>
+                <p class="send-hint">Under the receipt below, tap <strong>Text receipt</strong> or <strong>Email receipt</strong> — it opens Messages or Mail with the receipt already filled in, ready to send.</p>
+              </div>
+            </div>
+
+            <div class="totals" id="totalsBox"></div>
+          </section>
+
+          <section class="card" id="receiptCard" aria-label="Receipt">
+            <h2>Receipt</h2>
+            <div class="receipt-paper" id="receiptPaper"></div>
+            <div class="send-row">
+              <a class="send-btn" id="textBtn" href="#" role="button">Text receipt</a>
+              <a class="send-btn" id="emailBtn" href="#" role="button">Email receipt</a>
+              <button class="ghost-btn" id="copyBtn" type="button">Copy text</button>
+              <button class="ghost-btn" id="dlBtn" type="button">Download</button>
+            </div>
+            <div class="send-status" id="sendStatus" role="status"></div>
+            <div class="send-err" id="sendErr" role="alert"></div>
+            <button class="new-sale" id="newSale" type="button">New sale — clear everything</button>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="scan-overlay" id="scanOverlay">
+      <video id="scanVideo" playsinline muted></video>
+      <p>Point the camera at a barcode. If the code isn’t linked to a product yet, you’ll link it once — after that, scanning adds it straight to the sale.</p>
+      <button class="close-scan" id="scanClose" type="button">Cancel</button>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script>
+      "use strict";
+      /* ===== Catalog: Amway retail prices pulled from amway.com, Oct 17, 2026.
+         XS ready-to-drink flavors are coded as separate items, matching how
+         amway.com sells them (flavor list verified on amway.com, Oct 26, 2026).
+         Twist Tubes are likewise split by flavor (verified on amway.com product
+         pages + Amway U.S. Complete Price List, Oct 26, 2026): Nutrilite Twist
+         Tubes 2GO Antioxidant Health - Mango Citrus 110538 $28.25, Immunity
+         Health - Strawberry Kiwi 110855 $28.25, Joint Health - Raspberry
+         110857 $28.25, Variety Pack 110922 $28.25; XS Sports Twist Tubes
+         Fruit Punch 110390 $27.00 and Raspberry Lemonade 305555 $27.00.
+         The two Artistry Skin Nutrition masks launched Oct 21, 2026 (Omega+
+         Sheet Mask $35.00 and Brightening Vitamin C+ Gel Mask $45.00, each a
+         box of 5) were added Oct 26, 2026 at their amway.com prices.
+         Each product: [name, price, categoryIndex, flags]
+         flags: 1 = XS energy drink (+$1.50 fee), 2 = laundry detergent (+$1.50 fee),
+                4 = eSpring under-counter Aux Faucet special ($1,094, no sales tax) ===== */
+      const CATS = ["Nutrition", "Energy & Hydration", "Personal Care", "Oral Care", "Laundry", "Kitchen", "Home Cleaning", "Skincare", "Other"];
+      const PRODUCTS = [["Nutrilite™ Men's Pack",87.75,0,0],["Nutrilite Begin™ Daily GI Primer",91.0,0,0],["Nutrilite™ Balance Within™ Probiotic",50.75,0,0],["Nutrilite™ Digestive Enzyme",45.0,0,0],["Nutrilite™ Slimmetry Dietary Supplement",38.25,0,0],["Nutrilite™ Perfect Pack",195.0,0,0],["Nutrilite™ Concentrated Fruits and Vegetables",54.0,0,0],["Nutrilite™ Kids Daily Chewable Multivitamins",22.5,0,0],["Nutrilite™ Women's Daily Multivitamin Tablets",40.5,0,0],["Nutrilite™ Women's Pack",73.25,0,0],["Nutrilite™ Iron Folic",20.25,0,0],["Nutrilite™ Cellular Aging Support",87.75,0,0],["Nutrilite™ Carb Blocker",42.75,0,0],["Nutrilite™ Advanced Omega",47.25,0,0],["Nutrilite™ Men's Daily Multivitamin Tablets",40.5,0,0],["Nutrilite™ Lean Muscle",60.75,0,0],["Nutrilite™ Magnesium",39.5,0,0],["Nutrilite™ Cal Mag D",50.75,0,0],["Nutrilite™ Bone Health Pack",120.0,0,0],["Nutrilite™ Vitamin D",33.75,0,0],["Nutrilite™ Omega",28.25,0,0],["Nutrilite™ Complete Menopause Support",45.0,0,0],["Nutrilite™ Heart Health CoQ10",23.5,0,0],["Nutrilite™ Prostate Health",54.0,0,0],["Nutrilite™ Ultra Focus Energy Pack",49.5,0,0],["Nutrilite™ Prebiotic Fiber",49.5,0,0],["Nutrilite™ Immunity Defense Zinc + Holy Basil - 60 tablets",20.25,0,0],["Nutrilite™ Hair, Skin & Nail Health",30.25,0,0],["Nutrilite™ Kids Complete Immunity Fast-Melt Powder",33.75,0,0],["Nutrilite™ Heart Health Pack",152.0,0,0],["Nutrilite™ Kids Brainiums DHA™ Jelly Splat",30.25,0,0],["Nutrilite™ Stress Relief Probiotic",56.25,0,0],["Nutrilite™ Cycle Support",44.0,0,0],["Nutrilite™ Vision Health",40.5,0,0],["Nutrilite™ Metabolic Pre & Postbiotic",47.25,0,0],["Nutrilite™ Immunity Echinacea",46.0,0,0],["Nutrilite™ Cholesterol Health",40.5,0,0],["Nutrilite™ Kids Toddler Immunity Drops",28.25,0,0],["Nutrilite™ Chewable Vitamin E",50.75,0,0],["Nutrilite™ Sleep Health",32.5,0,0],["Nutrilite™ ClearGuard™",31.5,0,0],["Nutrilite™ Organics Women's Daily Multi Gummies",41.5,0,0],["Nutrilite™ Organics Men's Daily Multi Gummies",41.5,0,0],["Nutrilite™ Organics Green Superfood Powder",52.75,0,0],["Nutrilite™ Organics Immunity Superfood Powder",52.75,0,0],["Nutrilite™ Organics Ashwagandha Capsules",51.75,0,0],["Nutrilite™ Organics Turmeric Gummies",45.0,0,0],["Nutrilite™ Organics Lion's Mane Mushroom Capsules",39.5,0,0],["Nutrilite™ Organics Horny Goat Weed & Tribulus Capsules",52.75,0,0],["Nutrilite™ Organics Turmeric Capsules",40.5,0,0],["Nutrilite™ Organics Chamomile Tea",20.25,0,0],["n* by Nutrilite™ Go Shield – Immunity Gummies",27.0,0,0],["n* by Nutrilite™ #nofilter Collagen Gummies",25.75,0,0],["n* by Nutrilite™ Eye Mojo – Blue Light Vision Gummies",24.75,0,0],["n* by Nutrilite™ #nofilter Collagen Peptides",37.25,0,0],["n* by Nutrilite™ Collagen Shots",51.75,0,0],["n* by Nutrilite™ Sweet Dreams – Sleep Gummies",24.75,0,0],["Perfect Empowered Drinking Water®",58.5,0,0],["Nutrilite™ Organics All-in-One Meal Powder",82.25,0,0],["Nutrilite™ Organics All-in-One Shakes",83.25,0,0],["Nutrilite™ Organics All-in-One Bars",66.25,0,0],["Nutrilite™ Organics Plant Protein Powder",49.5,0,0],["Nutrilite™ Double X™ Multivitamin",77.75,0,0],["Nutrilite™ Vitamin B Dual-Action",44.0,0,0],["Nutrilite™ Joint Health",74.25,0,0],["Nutrilite™ Vitamin C Extended Release",63.0,0,0],["Nutrilite™ Wellness Bars - Nutty Dark Chocolate",33.75,0,0],["Everyday Nutrition Solution",174.5,0,0],["Nutrilite™ Begin 30 Holistic Wellness Program Solution",240.75,0,0],["Energy Solution",180.0,0,0],["Healthy Aging Solution",173.25,0,0],["Walking to Bronze Bundle",259.0,0,0],["Fitness Jump Start Solution",211.5,0,0],["Sleep + Stress Solution",220.5,0,0],["Toning Stack",362.25,0,0],["Inner + Outer Beauty Solution",382.5,0,0],["Peak Performance Stack",238.25,0,0],["Muscle Gains Stack",343.0,0,0],["Burn Stack",351.0,0,0],["Nutrilite™ Twist Tubes 2GO™ – Antioxidant Health - Mango Citrus",28.25,1,0],["Nutrilite™ Twist Tubes 2GO™ – Immunity Health - Strawberry Kiwi",28.25,1,0],["Nutrilite™ Twist Tubes 2GO™ – Joint Health - Raspberry",28.25,1,0],["Nutrilite™ Twist Tubes 2GO™ – Variety Pack",28.25,1,0],["XS™ Creatine+",62.0,1,0],["XS™ Ignite Powder – Moro Blood Orange",51.75,1,0],["XS™ CBD Cream",68.75,1,0],["XS™ Sports Protein Bars",48.25,1,0],["XS™ Sports Protein Shakes",60.75,1,0],["XS™ Grass-Fed Whey Protein",74.25,1,0],["XS™ Grass-Fed Whey Protein Powder Sachets",60.75,1,0],["XS™ Pre-Workout Boost",40.5,1,0],["XS™ Muscle Multiplier",56.25,1,0],["XS™ Post-Workout Recovery",40.5,1,0],["XS™ CocoWater Hydration Drink Mix",33.75,1,0],["XS™ Energy Drink 12 oz – Classic",44.0,1,1],["XS™ Energy Drink 12 oz – Rocket Blast",44.0,1,1],["XS™ Energy Drink 12 oz – Black Cherry Cola",44.0,1,1],["XS™ Energy Drink 12 oz – Wild Berry",44.0,1,1],["XS™ Energy Drink 12 oz – Tropical",44.0,1,1],["XS™ Energy Drink 12 oz – Citrus",44.0,1,1],["XS™ Energy Drink 12 oz – Cranberry-Grape",44.0,1,1],["XS™ Energy Drink 12 oz – Caffeine-Free Cranberry-Grape",44.0,1,1],["XS™ Energy Drink 12 oz – Watermelon Lemonade",44.0,1,1],["XS™ Energy Drink 12 oz – Electric Lemon",44.0,1,1],["XS™ Energy Drink 12 oz – Root Beer",44.0,1,1],["XS™ Energy Drink 12 oz – Summit",44.0,1,1],["XS™ Energy Drink 12 oz – Naranja",44.0,1,1],["XS™ Energy Drink 12 oz – Tamarindo",44.0,1,1],["XS™ Energy Drink 12 oz – Variety Case",44.0,1,1],["XS™ Sparkling Juiced Energy 12 oz – Pink Grapefruit",44.0,1,1],["XS™ Sparkling Juiced Energy 12 oz – Mango Pineapple Guava",44.0,1,1],["XS™ Sparkling Juiced Energy 12 oz – Caffeine-Free Mango Pineapple Guava",44.0,1,1],["XS™ Sparkling Juiced Energy 12 oz – Dragon Fruit",44.0,1,1],["XS™ Sparkling Juiced Energy 12 oz – Strawberry",44.0,1,1],["XS™ Sparkling Juiced Energy 12 oz – Blood Orange",44.0,1,1],["XS™ Sparkling Juiced Energy 12 oz – Variety Case",44.0,1,1],["XS™ Energy + Burn 12 oz – Kiwi Strawberry",48.25,1,1],["XS™ Energy + Burn 12 oz – Blue Razz",48.25,1,1],["XS™ Juiced and Burn 12 oz – Variety Case",47.25,1,1],["XS™ Energy + Focus Dietary Supplement - 60 Tablets",48.25,1,0],["XS™ Elite + Focus Energy Drink – Peach Mango",50.75,1,1],["XS™ Protein Crisps – Sriracha Lime",47.25,1,0],["XS™ Sports Twist Tubes – Fruit Punch",27.0,1,0],["XS™ Sports Twist Tubes – Raspberry Lemonade",27.0,1,0],["Satinique™ Smooth Moisture Conditioner",18.0,2,0],["Satinique™ Intensive Repair Shampoo",19.0,2,0],["Satinique™ Intensive Repair Conditioner",34.75,2,0],["Satinique™ 2-in-1 Shampoo & Conditioner",17.0,2,0],["Satinique™ Anti-Dandruff Scalp & Hair Shampoo",18.0,2,0],["Satinique™ Anti-Hair Fall Scalp & Hair Shampoo",19.0,2,0],["Satinique™ Anti-Hair Fall Scalp & Hair Conditioner",19.0,2,0],["Satinique™ Intensive Repair Hair Lotion",25.75,2,0],["Satinique™ Intensive Repair Hair Oil Serum",33.75,2,0],["Satinique™ Intensive Repair Hair Treatment",30.25,2,0],["Satinique™ Smooth Moisture Shampoo",33.75,2,0],["Satinique™ Anti-Hair Fall Scalp Tonic",34.75,2,0],["Satinique™ Purifying Scalp & Hair Conditioner",18.0,2,0],["Satinique™ Purifying Scalp & Hair Shampoo",18.0,2,0],["g&h™ Nourish Hand Cream",17.75,2,0],["g&h™ Protect Hand Sanitizer",15.5,2,0],["g&h™ Refresh Exfoliating Body Wash",33.75,2,0],["g&h™ Protect Body Lotion SPF 50",32.5,2,0],["g&h™ Baby Wash & Shampoo",18.25,2,0],["g&h™ Refresh Body Milk",18.5,2,0],["g&h™ Nourish Body Wash",17.25,2,0],["g&h™ Protect Hand Soap",11.25,2,0],["g&h™ Protect Bar Soap",33.75,2,0],["g&h™ Protect Aluminum Free Deodorant",14.5,2,0],["g&h™ Nourish Body Lotion",18.5,2,0],["g&h™ Baby Lotion",18.25,2,0],["g&h™ Protect Antiperspirant Deodorant Roll-On",12.75,2,0],["g&h™ Dynamic Duo (2-product bundle)",35.5,2,0],["Glister™ Multi-Action Concentrated Oral Rinse",16.5,3,0],["Glister™ Multi-Action Power Toothbrush",197.0,3,0],["Glister™ Multi-Action Power Toothbrush Refills",42.75,3,0],["Glister™ Multi-Action Dental Floss, 2-pack",14.75,3,0],["Glister™ Mint Refresher Spray",8.75,3,0],["Glister™ Travel Size Multi-Action Toothpaste, 6-pack",24.75,3,0],["Glister™ Multi-Action Toothpaste",9.0,3,0],["Amway Home™ SA8™ Liquid Laundry Detergent",63.25,4,2],["Amway Home™ SA8™ Powder Laundry Detergent",63.25,4,2],["Amway Home™ Pour and Measure Cap",5.25,4,0],["Amway Home™ Fabric Softener – Floral Scent",17.0,4,0],["Amway Home™ Prewash Spray",22.25,4,0],["Amway Home™ All Fabric Bleach",21.0,4,0],["Amway Home™ Dish Drops™ Dishwashing Liquid – Original Scent",19.0,5,0],["Amway Home™ Dish Drops™ Dispenser Bottle",9.25,5,0],["Amway Home™ Automatic Dish Tablets",31.25,5,0],["iCook™ Replacement Knob/Fingerguard – Steel Lids",5.5,5,0],["iCook™ Replacement Handle – Nonstick Pan Long Handle",6.0,5,0],["iCook™ Replacement Side Handle – 12-Inch Nonstick Fry Pan",5.5,5,0],["iCook™ Replacement Knob/Fingerguard – Glass Lids",7.25,5,0],["iCook™ 5-Piece Knifeware Set",619.0,5,0],["iCook™ 9.5-inch Nonstick Frypan with Lid",258.0,5,0],["iCook™ Replacement Handle – Side Handle for Large Pieces",5.5,5,0],["iCook™ Replacement Handle – Long Handle",6.0,5,0],["iCook™ Replacement Handle – Side Handle",5.25,5,0],["iCook™ 19-Piece Collection",1729.0,5,0],["iCook™ Multipurpose Shears",84.5,5,0],["iCook™ 11-inch Nonstick Frypan with Lid",314.0,5,0],["iCook™ 6-Piece 8 L/8-Quart Dutch Oven",494.0,5,0],["iCook™ 4-Piece 4 L/4 Quart Stock Pot",359.0,5,0],["iCook™ 5-Piece Sauté Set",528.0,5,0],["iCook™ 4-Piece Saucepan Set",348.0,5,0],["Amway Home™ 1L Dispenser Pump",6.5,6,0],["Amway Home™ Spray Bottle",8.25,6,0],["Amway Home™ Glass Cleaner",20.5,6,0],["Amway Home™ Kitchen Cleaner",20.5,6,0],["Amway Home™ Bathroom Cleaner",20.5,6,0],["Amway Home™ Scrub Buds™ Scouring Pads",9.75,6,0],["Amway Home™ L.O.C.™ Multi-Purpose Cleaner",15.0,6,0],["eSpring™ Under the Counter Unit with Aux Faucet",1508.0,6,4],["eSpring™ Under the Counter Unit with Single Line Output",1508.0,6,0],["eSpring™ Above the Counter Unit with Diverter",1508.0,6,0],["eSpring™ 220v Electronic Module",92.5,6,0],["eSpring™ Filter Retaining Ring",11.25,6,0],["eSpring™ Water Treatment System Power Supply",44.5,6,0],["eSpring™ Filter Bracket",29.0,6,0],["eSpring™ Water Purifier Brochure",15.0,6,0],["eSpring™ Plugs Assembly Service Part",5.0,6,0],["eSpring™ Replacement Diverter Kit",225.0,6,0],["eSpring™ Under the Counter Unit with Designer Faucet",1620.0,6,0],["eSpring™ Pre-Filter",15.75,6,0],["eSpring™ Tubing Set Replacement Kit",14.75,6,0],["eSpring™ Single Line Faucet/Ice Maker Conversion Kit",206.0,6,0],["eSpring™ e3 Carbon Filter",293.0,6,0],["eSpring™ Angle Stop Adapter Valve (Tee for Cold Water Line)",31.0,6,0],["eSpring™ Replacement Diverter",89.25,6,0],["eSpring™ UV Water Purifier Replacement Filter Cartridge With UV Technology",336.0,6,0],["eSpring™ Auxiliary Faucet Replacement Kit",161.0,6,0],["Atmosphere™ Replacement Carbon (Odor) Filter",141.0,6,0],["Atmosphere™ Replacement HEPA Filter",197.0,6,0],["Atmosphere Mini™ Replacement Filter",203.0,6,0],["Atmosphere Mini™ Air Treatment System",1069.0,6,0],["Atmosphere Sky™ Air Treatment System",1969.0,6,0],["Atmosphere Sky™ Replacement HEPA Filter",216.0,6,0],["Atmosphere Sky™ Replacement Carbon (Odor) Filter",158.0,6,0],["Artistry Studio™ Glow-up Solution Bundle",81.0,7,0],["Artistry Skin Nutrition™ Balancing System Bundle",108.0,7,0],["Artistry Skin Nutrition™ Firming System Bundle",174.25,7,0],["Artistry Skin Nutrition™ Hydrating System Bundle",120.5,7,0],["Artistry Skin Nutrition™ Renewing System Bundle",169.75,7,0],["Everyday Skin Solution",198.0,7,0],["Artistry Labs™ Retexturizing System Aquabrasion Device Spare Parts",9.0,7,0],["Artistry Labs™ Retexturizing System",424.0,7,0],["Artistry Labs™ Retexturizing System Refill",224.0,7,0],["Artistry Labs™ Illuminating Serum",127.0,7,0],["Artistry LongXevity™ Soft Cream",411.0,7,0],["Artistry Labs™ Retexturizing Serum",127.0,7,0],["Artistry Skin Nutrition™ Moisturizing Omega+ Sheet Mask",35.0,7,0],["Artistry Skin Nutrition™ Brightening Vitamin C+ Gel Mask",45.0,7,0],["Artistry Skin Nutrition™ Sleeping Mask",67.5,7,0],["Artistry Signature Select™ Firming Mask",55.25,7,0],["Artistry™ Intensive Skincare 14 Night Reset Program",242.0,7,0],["Artistry Signature Select™ Polishing Mask",50.75,7,0],["Artistry Signature Select™ Purifying Mask",50.75,7,0],["Artistry Skin Nutrition™ Hydrating Eye Gel Cream",48.25,7,0],["Artistry Skin Nutrition™ Balancing Fresh Shake Toner",27.0,7,0],["Artistry Labs™ Illuminating System",223.0,7,0],["Artistry Studio™ Done with Zit! Acne Treatment + Clearing Gel 2% Salicylic Acid",37.25,7,0],["Artistry LongXevity™ Rich Cream",411.0,7,0],["Artistry LongXevity™ Eye Cream",231.0,7,0],["Artistry LongXevity™ Rich Cream Refill",370.0,7,0],["Artistry LongXevity™ Eye Cream Refill",208.0,7,0],["Artistry LongXevity™ Soft Cream Refill",370.0,7,0],["Artistry Skin Nutrition™ Micellar Makeup Remover + Cleanser",41.5,7,0],["Artistry™ Men Post Shave Toner",46.0,7,0],["Artistry Skin Nutrition™ Defying Serum",99.0,7,0],["Artistry Skin Nutrition™ Balancing Matte Day Lotion SPF 30",49.5,7,0],["Artistry™ Men Facial Moisturizer",59.5,7,0],["Artistry Skin Nutrition™ Balancing Jelly Cleanser",31.5,7,0],["Artistry Skin Nutrition™ Balancing Matte Gel Lotion",49.5,7,0],["Artistry Skin Nutrition™ Firming Ultra Lifting Cream",91.0,7,0],["Artistry Skin Nutrition™ Multi-Defense UV Protect Broad Spectrum SPF 50+",67.5,7,0],["Artistry™ Intensive Skincare Anti-Wrinkle Firming Serum",113.0,7,0],["Artistry Studio™ Glow Boss Cleanser + Exfoliator",24.75,7,0],["Artistry Skin Nutrition™ Hydrating Gel Cream",54.0,7,0],["Artistry Skin Nutrition™ Hydrating Mousse Cleanser",37.25,7,0],["Artistry Skin Nutrition™ Renewing Foaming Cleanser",38.25,7,0],["Artistry Skin Nutrition™ Renewing Reactivation Eye Cream",65.25,7,0],["Artistry Skin Nutrition™ Renewing Reactivation Day Lotion SPF 30",86.5,7,0],["Artistry Studio™ My Main Squeeze Moisturizer",32.5,7,0],["Artistry™ Men Gentle Face Wash",36.0,7,0],["Artistry Skin Nutrition™ Correcting Serum",116.0,7,0],["Artistry Studio™ Spot On Dots!",31.5,7,0],["Artistry Skin Nutrition™ Vitamin C + HA3 Daily Serum",66.25,7,0],["Artistry Skin Nutrition™ Renewing Reactivation Day Cream SPF 30",86.5,7,0],["Artistry Skin Nutrition™ Renewing Softening Toner",45.0,7,0],["Artistry Skin Nutrition™ Renewing Reactivation Cream",86.5,7,0],["Artistry Skin Nutrition™ Hydrating Smoothing Toner",29.25,7,0],["Artistry Skin Nutrition™ Hydrating Day Lotion SPF 30",54.0,7,0],["Artistry Studio™ Clean Start Micellar Makeup Remover + Cleanser",13.0,7,0],["Artistry Studio™ Rosé All Day Anti-Acne Toner + Pore Refresher 1% Salicylic Acid Treatment",23.75,7,0],["Artistry Studio™ Pampered Pout Lip Balm + Overnight Mask",24.75,7,0],["Artistry Signature Select™ Hydrating Mask",54.0,7,0],["Artistry Signature Select™ Brightening Mask",59.5,7,0],["Artistry Ever Perfect™ Powder Foundation Refill",32.5,7,0],["Artistry Ever Perfect™ Powder Foundation Compact",22.5,7,0],["Artistry Future Glow™ Serum Concealer",36.0,7,0],["Artistry Ever Perfect™ Smoothing Primer",44.0,7,0],["Artistry Go Vibrant™ 3-in-1 Volume Mascara",33.75,7,0],["Artistry Go Vibrant™ Waterproof Length Serum Mascara",33.75,7,0],["Artistry Ever Perfect™ Longwearing Foundation",50.75,7,0],["Artistry Ever Perfect™ Loose Setting Powder",46.0,7,0],["Artistry Go Vibrant™ Light Up Liquid Lip Matte",28.25,7,0],["Artistry Go Vibrant™ Cream & Powder Blush",44.0,7,0],["Artistry Go Vibrant™ Eyeshadow Quad",46.0,7,0],["Artistry Go Vibrant™ Light Up Liquid Lip Glow",28.25,7,0],["Artistry Go Vibrant™ Light Up Liquid Lip Plumper",28.25,7,0],["Artistry Future Glow™ Foundation Brush",33.75,7,0],["Artistry Future Glow™ Serum Foundation",52.75,7,0],["Artistry Future Glow™ Pressed Powder",41.5,7,0],["Artistry Go Vibrant™ Waterproof Brow Pencil and Tinted Gel",30.25,7,0],["Artistry Go Vibrant™ Waterproof Pencil Eyeliner",28.25,7,0],["Artistry Go Vibrant™ Longwearing Liquid Eyeliner",29.25,7,0],["Artistry Go Vibrant™ Matte Lipstick",31.5,7,0],["Artistry Go Vibrant™ Cream Lipstick",31.5,7,0],["Artistry Go Vibrant™ Sheer Lip Balm",32.5,7,0],["Artistry Studio™ Mascara Base Primer",28.25,7,0],["Artistry™ Brush Set",90.0,7,0],["Artistry™ Makeup Perfecting Sponge",20.25,7,0],["Artistry Ideal Radiance™ Illuminating CC Cream – Dark",38.0,7,0],["Artistry™ Men Unknown Eau de Parfum Spray",127.0,7,0],["Artistry Flora Chic™ Eau de Parfum Spray",129.0,7,0],["Nutriplant™ AG – 30 Gallons",3531.92,8,0],["Nutriplant™ AG – 2.5 Gallons",357.22,8,0],["Nutriplant™ AG* - 260 Gallon Tote Container",30608.56,8,0],["Nutriplant™ SD 25 lb. Bucket",978.38,8,0],["Nutriplant™ SG 25 lb. Bucket",1194.62,8,0],["Nutriplant™ SL – 2.5 Gallons",636.0,8,0],["APSA-80™ Concentrated Adjuvant*",259.7,8,0],["Amway™ Catalogs 2026-2027, Single",7.0,8,0],["Amway™ Catalogs 2026-2027, 3-Pack",19.0,8,0]];
+      /* ===== SKUs (Amway item numbers), parallel to PRODUCTS by index.
+         Source: Amway U.S. Complete Price List (Sept 3, 2026) matched by name +
+         Sept 2026 retail price, cross-checked against amway.com product pages
+         (Oct 26, 2026). Where one catalog line covers several flavors, shades
+         or sizes, every variant's number is listed. "" = no item number could
+         be verified in Amway's published sources, so none is shown. ===== */
+      const SKUS = [
+        "123365","127725","120571","A8903","117085","123377","100648","123043","125559","123372",
+        "102046","127813","100193","126136","125557","100280","128032","110610","123362","119346",
+        "126132","126154","A8601","A8004","123842","127444","124692","A7553","123046","123367",
+        "305554","125514","126161","124708","127620","A5986","100070","126185","A4042","127940",
+        "102735","125562","125561","125937","125936","308641","308638","308639","308640","308642",
+        "308636","124555","125545","125544","125553","124936","124506","285375","318670 · 318671 · 318672","318668 · 318669",
+        "316302 · 316303 · 316305","125921 · 125923 · 125925","A4300","110171","106964","109747","111045","318781 · 322021 · 322022","326778–326783","321549",
+        "321548","321111","128208 · 128209 · 128210","321893","USS0004","USS0013","USS0031","USS0003","","110538","110855","110857","110922",
+        "128463","127811","296753","110385 · 110386","110369 · 110370","128154 · 128155 · 128156","128167 · 128168 · 128169","316377 · 316378","126753 · 126754","316380",
+        "110601 · 110631","126883","","126201","126200","126199","126184","126197","126983","126998",
+        "101444","126202","126982","126981","126198","127070","126987","126986","126984","126985",
+        "","","","127936","127935","127071","101593","266673","110628","110390","305555",
+        "126451","126452","126635","126455","126463","126457","126459","126468","126467","126465",
+        "126450","126466","126462","126460","125902","126855","125915","125901","126308","125893",
+        "125890","125894","125897","321108","125891","126309","127877","","124108","127705",
+        "127706","124112","124111","126001","124106","110478","109849","AD5113","110480","110403",
+        "124485","110488","107890","109867","400137","","","400141","102709","124694",
+        "400139","400135","400136","120231","102715","124695","101086","101085","101084","101082",
+        "103972","116798","112537","112536","112546","110490","E0001","122941R2","122942","122940R2",
+        "WTI0417Z","WTI0423Z","WTI0420","","402086","","127066","128212UB · 128212UC · 128212UN","127063","127064",
+        "101398","122943","","127065","100186","125627","118040","101078","123322","124746",
+        "120539","120540","120541","266672","266686","266695","266693","266694","321550","127173",
+        "126807V","125547V","126220","127572V","128178","128275V","128276V","125575","122341V","123776V",
+        "122339V","122342V","123796V","123794V","126219","125327","127571V","127573V","127575V","127577V",
+        "127576V","123791V","111227V","127019V","123799","111228V","123792V","123797V","123786V","124823",
+        "109709","124812","123798V","123793V","123781V","123784V","123857","125966","111225V","127020V",
+        "124816","125517V","123787","123783V","123785V","123795V","123800","124811","124813","124819",
+        "122343V","122340V","127832–127843","127844","127825–127830","127831","127845","126740D","127449–127465","127466D · 127467D · 127468D",
+        "127476D–127479D · 127584D","127472D–127475D","126736–126739","127481D–127483D · 127601D","127484D","319435","126718–126734","126735D","126745D–126747D","126741D · 126744D",
+        "126743D","124155D–124163D","124144D–124154D","124674D","123038D","110858","763778","","120549D","119630D",
+        "603481","603480","314952","603479","316220","705379","603562","128525",""
+      ];
+      const SURCHARGE_CENTS = 150;
+      const ESPRING_SPECIAL_CENTS = 109400;
+      const ESPRING_SAVINGS_CENTS = 41400; // shown savings for the eSpring Aux Faucet special: $1,508 list − $1,094 = $414 off
+      const TAX_DEFAULT = 4.667;
+      // Expo-day sale: 10% off all prices on November 8, 2026 only (not before, not after).
+      function isExpoSaleDay(d) {
+        d = d || new Date();
+        return d.getFullYear() === 2026 && d.getMonth() === 10 && d.getDate() === 8;
+      }
+      function expoDefaultDiscount() { return isExpoSaleDay() ? 10 : 0; }
+
+      const $ = (s) => document.querySelector(s);
+      const money = (c) => "$" + (c / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const toCents = (d) => Math.round(d * 100);
+      const norm = (s) => (s || "").toLowerCase().replace(/[™®©]/g, "").replace(/\s+/g, " ").trim();
+
+      /* ---------- state ---------- */
+      let cart = new Map(); // key -> {kind:'p', idx, qty} | {kind:'c', name, priceCents, qty}
+      let customSeq = 0;
+      let activeCat = -1; // -1 = all
+      let payMethod = "Credit Card";
+      let receiptNo = makeReceiptNo();
+      let codeLinks = new Map(); // barcode string -> product idx (this session only)
+      let pendingCode = null;
+
+      function makeReceiptNo() {
+        const d = new Date();
+        const p = (n) => String(n).padStart(2, "0");
+        return "RT-" + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + Math.floor(1000 + Math.random() * 9000);
+      }
+
+      /* ---------- product helpers ---------- */
+      function unitCents(p) { return (p[3] & 4) ? ESPRING_SPECIAL_CENTS : toCents(p[1]); }
+      function skuText(idx) { return SKUS[idx] || ""; }
+      function feeCents(p) { return (p[3] & 3) ? SURCHARGE_CENTS : 0; }
+      function cartQty(idx) { const it = cart.get("p" + idx); return it ? it.qty : 0; }
+
+      function compute() {
+        let merch = 0, fees = 0, listTotal = 0, count = 0, espringMerch = 0;
+        const lines = [];
+        for (const it of cart.values()) {
+          let name, unit, fee = 0, list = null, detail = "", sku = "";
+          if (it.kind === "p") {
+            const p = PRODUCTS[it.idx];
+            name = p[0]; unit = unitCents(p); fee = feeCents(p); sku = skuText(it.idx);
+            if (p[3] & 4) { list = toCents(p[1]); }
+          } else { name = it.name; unit = it.priceCents; }
+          const lineMerch = unit * it.qty;
+          const lineFees = fee * it.qty;
+          merch += lineMerch; fees += lineFees; count += it.qty;
+          if (it.kind === "p" && (PRODUCTS[it.idx][3] & 4)) espringMerch += lineMerch;
+          lines.push({ name, qty: it.qty, unit, fee, list, sku, lineMerch, lineFees });
+        }
+        const discPct = clampNum(parseFloat($("#discountPct").value) || 0, 0, 100);
+        const discount = Math.round(merch * discPct / 100);
+        // eSpring special is not taxed: tax only the other items (their
+        // discounted merchandise) plus fees. The eSpring amount itself
+        // still counts toward the merchandise total and the discount.
+        const taxableMerch = merch - espringMerch;
+        const taxableDiscount = Math.round(taxableMerch * discPct / 100);
+        const taxable = taxableMerch - taxableDiscount + fees;
+        const taxRate = clampNum(parseFloat($("#taxRate").value) || 0, 0, 30);
+        const tax = Math.round(taxable * taxRate / 100);
+        return { lines, merch, fees, discount, discPct, taxable, taxRate, tax, total: merch - discount + fees + tax, count };
+      }
+      function clampNum(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+      /* ---------- catalog rendering ---------- */
+      function buildChips() {
+        const box = $("#chips");
+        const mk = (label, idx) => {
+          const b = document.createElement("button");
+          b.type = "button"; b.className = "chip" + (activeCat === idx ? " on" : "");
+          b.textContent = label;
+          b.addEventListener("click", () => { activeCat = idx; buildChips(); renderResults(); });
+          box.appendChild(b);
+        };
+        box.textContent = "";
+        mk("All", -1);
+        CATS.forEach((c, i) => mk(c, i));
+      }
+
+      function searchScore(p, q, idx) {
+        if (!q) return 1;
+        const name = norm(p[0]);
+        const hay = name + " " + norm(CATS[p[2]]) + " " + norm(skuText(idx));
+        if (!hay.includes(q)) {
+          // allow multi-word queries where every word appears somewhere
+          const words = q.split(" ");
+          if (!words.every((w) => hay.includes(w))) return 0;
+        }
+        if (name.startsWith(q)) return 4;
+        if (name.includes(" " + q)) return 3;
+        if (name.includes(q)) return 2;
+        return 1;
+      }
+
+      function renderResults() {
+        const q = norm($("#search").value);
+        $("#clearSearch").style.display = q ? "block" : "none";
+        let scored = [];
+        PRODUCTS.forEach((p, idx) => {
+          if (activeCat >= 0 && p[2] !== activeCat) return;
+          const s = searchScore(p, q, idx);
+          if (s > 0) scored.push([s, idx]);
+        });
+        scored.sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+        const total = scored.length;
+        const shown = scored.slice(0, 120);
+        $("#resultsMeta").textContent =
+          total === 0 ? "" :
+          (q || activeCat >= 0 ? total + (total === 1 ? " product" : " products") : total + " products in the desk catalog — anything not listed can be added by hand below") +
+          (total > shown.length ? " · showing first " + shown.length + " — keep typing to narrow it down" : "");
+
+        const list = $("#plist");
+        list.textContent = "";
+        if (total === 0) {
+          const d = document.createElement("div");
+          d.className = "empty-note";
+          d.textContent = "Nothing in the catalog matches that. Try fewer words — or add it by hand below.";
+          list.appendChild(d);
+          return;
+        }
+        for (const [, idx] of shown) {
+          const p = PRODUCTS[idx];
+          const row = document.createElement("div");
+          row.className = "prow";
+
+          const info = document.createElement("div");
+          info.className = "pinfo";
+          const nm = document.createElement("div");
+          nm.className = "pname"; nm.textContent = p[0];
+          const meta = document.createElement("div");
+          meta.className = "pmeta";
+          const sku = skuText(idx);
+          meta.textContent = CATS[p[2]] + (sku ? " · SKU " + sku : "");
+          info.appendChild(nm); info.appendChild(meta);
+          const discPctNow = clampNum(parseFloat($("#discountPct").value) || 0, 0, 100);
+          const badges = [];
+          if (discPctNow > 0) badges.push(["sale", trimPct(discPctNow) + "% OFF" + (discPctNow === 10 ? " — NOV 8 EXPO" : "")]);
+          if (p[3] & 4) badges.push(["special", "SPECIAL — " + money(ESPRING_SAVINGS_CENTS) + " off"]);
+          if (p[3] & 1) badges.push(["fee", "+$1.50 XS fee"]);
+          if (p[3] & 2) badges.push(["fee", "+$1.50 detergent fee"]);
+          if (badges.length) {
+            const bw = document.createElement("div");
+            bw.className = "badges";
+            for (const [cls, txt] of badges) {
+              const s = document.createElement("span");
+              s.className = "badge " + cls; s.textContent = txt;
+              bw.appendChild(s);
+            }
+            info.appendChild(bw);
+          }
+          row.appendChild(info);
+
+          const price = document.createElement("div");
+          price.className = "pprice";
+          const unitNow = unitCents(p);
+          if (discPctNow > 0) {
+            const was = document.createElement("span");
+            was.className = "was"; was.textContent = money(unitNow);
+            price.appendChild(was);
+            const now = document.createElement("span");
+            now.className = "now"; now.textContent = money(Math.round(unitNow * (100 - discPctNow) / 100));
+            price.appendChild(now);
+          } else {
+            if (p[3] & 4) {
+              const was = document.createElement("span");
+              was.className = "was"; was.textContent = money(toCents(p[1]));
+              price.appendChild(was);
+            }
+            const now = document.createElement("span");
+            now.className = "now"; now.textContent = money(unitNow);
+            price.appendChild(now);
+          }
+          row.appendChild(price);
+
+          const qty = cartQty(idx);
+          if (pendingCode) {
+            const lb = document.createElement("button");
+            lb.type = "button"; lb.className = "link-btn"; lb.textContent = "Link code";
+            lb.addEventListener("click", () => linkCode(idx));
+            row.appendChild(lb);
+          } else if (qty > 0) {
+            row.appendChild(stepperEl(
+              () => changeQty("p" + idx, -1),
+              () => changeQty("p" + idx, 1),
+              qty
+            ));
+          } else {
+            const ab = document.createElement("button");
+            ab.type = "button"; ab.className = "add-btn"; ab.textContent = "Add";
+            ab.addEventListener("click", () => { addProduct(idx); toast("Added " + p[0]); });
+            row.appendChild(ab);
+          }
+          list.appendChild(row);
+        }
+      }
+
+      function stepperEl(onMinus, onPlus, qty) {
+        const w = document.createElement("div");
+        w.className = "stepper";
+        const m = document.createElement("button");
+        m.type = "button"; m.textContent = "−"; m.setAttribute("aria-label", "One less");
+        m.addEventListener("click", onMinus);
+        const q = document.createElement("span");
+        q.className = "q"; q.textContent = qty;
+        const pl = document.createElement("button");
+        pl.type = "button"; pl.textContent = "+"; pl.setAttribute("aria-label", "One more");
+        pl.addEventListener("click", onPlus);
+        w.appendChild(m); w.appendChild(q); w.appendChild(pl);
+        return w;
+      }
+
+      /* ---------- cart ops ---------- */
+      function addProduct(idx, qty) {
+        const key = "p" + idx;
+        const it = cart.get(key);
+        if (it) it.qty += (qty || 1);
+        else cart.set(key, { kind: "p", idx, qty: qty || 1 });
+        renderAll();
+      }
+      function changeQty(key, delta) {
+        const it = cart.get(key);
+        if (!it) return;
+        it.qty += delta;
+        if (it.qty <= 0) cart.delete(key);
+        renderAll();
+      }
+      function setQty(key, qty) {
+        const it = cart.get(key);
+        if (!it) return;
+        if (qty <= 0) cart.delete(key); else it.qty = qty;
+        renderAll();
+      }
+      function renderCart() {
+        const box = $("#cartLines");
+        box.textContent = "";
+        if (cart.size === 0) {
+          const d = document.createElement("div");
+          d.className = "empty-note";
+          d.textContent = "Nothing added yet — search on the left and tap Add.";
+          box.appendChild(d);
+          return;
+        }
+        for (const [key, it] of cart.entries()) {
+          const row = document.createElement("div");
+          row.className = "cline";
+          const info = document.createElement("div");
+          info.className = "cinfo";
+          const nm = document.createElement("div");
+          nm.className = "cname";
+          let unit, fee = 0, detailBits = [];
+          if (it.kind === "p") {
+            const p = PRODUCTS[it.idx];
+            nm.textContent = p[0];
+            unit = unitCents(p); fee = feeCents(p);
+            const csku = skuText(it.idx);
+            if (csku) detailBits.push("SKU " + csku);
+            if (p[3] & 4) detailBits.push("Special price — list " + money(toCents(p[1])) + " · " + money(ESPRING_SAVINGS_CENTS) + " off");
+          } else { nm.textContent = it.name; unit = it.priceCents; }
+          detailBits.push(money(unit) + " each");
+          const discNow = clampNum(parseFloat($("#discountPct").value) || 0, 0, 100);
+          if (discNow > 0) detailBits.push(trimPct(discNow) + "% off applied in totals");
+          if (fee) detailBits.push("incl. " + money(fee) + " fee × " + it.qty);
+          const det = document.createElement("div");
+          det.className = "cdetail"; det.textContent = detailBits.join(" · ");
+          info.appendChild(nm); info.appendChild(det);
+          info.appendChild(stepperEl(() => changeQty(key, -1), () => changeQty(key, 1), it.qty));
+          row.appendChild(info);
+          const amt = document.createElement("div");
+          amt.className = "camt";
+          amt.textContent = money((unit + fee) * it.qty);
+          row.appendChild(amt);
+          const rm = document.createElement("button");
+          rm.type = "button"; rm.className = "rm"; rm.textContent = "×";
+          rm.setAttribute("aria-label", "Remove item");
+          rm.addEventListener("click", () => { cart.delete(key); renderAll(); });
+          row.appendChild(rm);
+          box.appendChild(row);
+        }
+      }
+
+      /* ---------- totals + receipt ---------- */
+      function renderTotals() {
+        const t = compute();
+        const box = $("#totalsBox");
+        box.textContent = "";
+        const rows = [];
+        rows.push(["Subtotal", money(t.merch), ""]);
+        if (t.discount > 0) rows.push(["Discount (" + trimPct(t.discPct) + "% off)", "−" + money(t.discount), "neg"]);
+        if (t.fees > 0) rows.push(["Handling fees", money(t.fees), ""]);
+        rows.push(["Tax (" + trimPct(t.taxRate) + "%)", money(t.tax), ""]);
+        for (const [l, v, cls] of rows) {
+          const r = document.createElement("div");
+          r.className = "trow";
+          const a = document.createElement("span"); a.className = "tl"; a.textContent = l;
+          const b = document.createElement("span"); b.className = "tv" + (cls ? " " + cls : ""); b.textContent = v;
+          r.appendChild(a); r.appendChild(b);
+          box.appendChild(r);
+        }
+        const g = document.createElement("div");
+        g.className = "trow grand";
+        const ga = document.createElement("span"); ga.className = "tl"; ga.textContent = "Total";
+        const gb = document.createElement("span"); gb.className = "tv"; gb.textContent = money(t.total);
+        g.appendChild(ga); g.appendChild(gb);
+        box.appendChild(g);
+
+        renderReceipt(t);
+        syncSendBtns();
+      }
+      function trimPct(n) { return (Math.round(n * 1000) / 1000).toString(); }
+
+      function receiptData(t) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+        return {
+          no: receiptNo, dateStr, timeStr,
+          soldTo: $("#custName").value.trim(),
+          pay: payMethod, t
+        };
+      }
+
+      function renderReceipt(t) {
+        const d = receiptData(t);
+        const paper = $("#receiptPaper");
+        paper.textContent = "";
+        const head = document.createElement("div");
+        head.className = "r-head";
+        const s1 = document.createElement("div");
+        s1.className = "r-seller"; s1.textContent = "Jaron and Codie Vergara";
+        const s2 = document.createElement("div");
+        s2.className = "r-sub"; s2.textContent = "Independent Business Owners · Amway™";
+        head.appendChild(s1); head.appendChild(s2);
+        paper.appendChild(head);
+        if (d.t.discPct === 10) {
+          const saleLine = document.createElement("div");
+          saleLine.className = "r-foot";
+          saleLine.style.fontWeight = "700";
+          saleLine.textContent = "*** NOV 8 EXPO DAY — 10% OFF ALL PRICES ***";
+          paper.appendChild(saleLine);
+        }
+        paper.appendChild(ruleEl());
+        paper.appendChild(lineEl("Receipt", d.no));
+        paper.appendChild(lineEl("Date", d.dateStr + " · " + d.timeStr));
+        if (d.soldTo) paper.appendChild(lineEl("Sold to", d.soldTo));
+        paper.appendChild(ruleEl());
+
+        if (d.t.lines.length === 0) {
+          const e = document.createElement("div");
+          e.textContent = "(no items yet)";
+          paper.appendChild(e);
+        }
+        for (const L of d.t.lines) {
+          paper.appendChild(lineEl(L.qty + " × " + L.name, money(L.lineMerch + L.lineFees)));
+          if (L.list) {
+            const det = document.createElement("div");
+            det.className = "r-detail";
+            det.textContent = "Special " + money(L.unit) + " — list ";
+            const st = document.createElement("span");
+            st.className = "strike"; st.textContent = money(L.list);
+            det.appendChild(st);
+            det.appendChild(document.createTextNode(" — " + money(ESPRING_SAVINGS_CENTS) + " off"));
+            paper.appendChild(det);
+          }
+          const detParts = [];
+          if (L.sku) detParts.push("SKU " + L.sku);
+          if (!L.list && (L.qty > 1 || L.fee)) detParts.push(money(L.unit) + " each" + (L.fee ? " + " + money(L.fee) + " fee" : ""));
+          if (detParts.length) {
+            const det = document.createElement("div");
+            det.className = "r-detail";
+            det.textContent = detParts.join(" · ");
+            paper.appendChild(det);
+          }
+        }
+        paper.appendChild(ruleEl());
+        paper.appendChild(lineEl("Subtotal", money(d.t.merch)));
+        if (d.t.discount > 0) paper.appendChild(lineEl("Discount (" + trimPct(d.t.discPct) + "% off)", "−" + money(d.t.discount)));
+        if (d.t.fees > 0) paper.appendChild(lineEl("Handling fees", money(d.t.fees)));
+        paper.appendChild(lineEl("Tax (" + trimPct(d.t.taxRate) + "%)", money(d.t.tax)));
+        const tot = lineEl("TOTAL", money(d.t.total));
+        tot.classList.add("r-total");
+        paper.appendChild(tot);
+        paper.appendChild(lineEl("Paid by", d.pay + " (charged separately)"));
+        paper.appendChild(ruleEl());
+        const foot = document.createElement("div");
+        foot.className = "r-foot";
+        foot.textContent = "Mahalo for shopping with us!";
+        paper.appendChild(foot);
+      }
+      function ruleEl() { const r = document.createElement("div"); r.className = "r-rule"; return r; }
+      function lineEl(l, v) {
+        const r = document.createElement("div");
+        r.className = "r-line";
+        const a = document.createElement("span"); a.className = "rl"; a.textContent = l;
+        const b = document.createElement("span"); b.className = "rv"; b.textContent = v;
+        r.appendChild(a); r.appendChild(b);
+        return r;
+      }
+
+      function receiptText() {
+        const t = compute();
+        const d = receiptData(t);
+        const W = 42;
+        const row = (l, v) => {
+          l = String(l); v = String(v);
+          if (l.length + v.length + 1 > W) return l + "\n" + " ".repeat(Math.max(0, W - v.length)) + v;
+          return l + " ".repeat(W - l.length - v.length) + v;
+        };
+        const ctr = (s) => " ".repeat(Math.max(0, Math.floor((W - s.length) / 2))) + s;
+        const out = [];
+        out.push(ctr("Jaron and Codie Vergara"));
+        out.push(ctr("Independent Business Owners"));
+        out.push(ctr("Amway"));
+        if (d.t.discPct === 10) out.push(ctr("*** NOV 8 EXPO DAY - 10% OFF ALL PRICES ***"));
+        out.push("-".repeat(W));
+        out.push(row("Receipt", d.no));
+        out.push(row("Date", d.dateStr + " " + d.timeStr));
+        if (d.soldTo) out.push(row("Sold to", d.soldTo));
+        out.push("-".repeat(W));
+        for (const L of d.t.lines) {
+          out.push(row(L.qty + " x " + L.name, money(L.lineMerch + L.lineFees)));
+          if (L.list) out.push("   Special " + money(L.unit) + " (list " + money(L.list) + ") - " + money(ESPRING_SAVINGS_CENTS) + " off");
+          const tParts = [];
+          if (L.sku) tParts.push("SKU " + L.sku);
+          if (!L.list && (L.qty > 1 || L.fee)) tParts.push(money(L.unit) + " each" + (L.fee ? " + " + money(L.fee) + " fee" : ""));
+          if (tParts.length) out.push("   " + tParts.join(" · "));
+        }
+        out.push("-".repeat(W));
+        out.push(row("Subtotal", money(d.t.merch)));
+        if (d.t.discount > 0) out.push(row("Discount (" + trimPct(d.t.discPct) + "% off)", "-" + money(d.t.discount)));
+        if (d.t.fees > 0) out.push(row("Handling fees", money(d.t.fees)));
+        out.push(row("Tax (" + trimPct(d.t.taxRate) + "%)", money(d.t.tax)));
+        out.push(row("TOTAL", money(d.t.total)));
+        out.push(row("Paid by", d.pay + " (charged separately)"));
+        out.push("-".repeat(W));
+        out.push(ctr("Mahalo for shopping with us!"));
+        return out.join("\n");
+      }
+
+      function renderAll() { renderResults(); renderCart(); renderTotals(); syncDiscChips(); }
+
+      /* ---------- toast ---------- */
+      let toastTimer = null;
+      function toast(msg) {
+        const el = $("#toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+      }
+
+      /* ---------- barcode scanning ---------- */
+      function showScanNote(html, sticky) {
+        const n = $("#scanNote");
+        n.innerHTML = html;
+        n.classList.add("show");
+        const cancel = n.querySelector("[data-cancel-link]");
+        if (cancel) cancel.addEventListener("click", () => { pendingCode = null; n.classList.remove("show"); renderResults(); });
+        if (!sticky) setTimeout(() => { if (!pendingCode) n.classList.remove("show"); }, 6000);
+      }
+      function handleCode(code) {
+        code = String(code).trim();
+        if (!code) return;
+        if (codeLinks.has(code)) {
+          const idx = codeLinks.get(code);
+          addProduct(idx);
+          toast("Added " + PRODUCTS[idx][0]);
+          return;
+        }
+        pendingCode = code;
+        $("#search").value = "";
+        activeCat = -1; buildChips();
+        showScanNote("Code <strong>" + escapeHtml(code) + "</strong> isn’t linked to a product yet. Find the product in the list and tap <strong>Link code</strong> — from then on, scanning it adds the item.<button type='button' data-cancel-link>Cancel</button>", true);
+        renderResults();
+        document.querySelector(".find-col").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function linkCode(idx) {
+        if (!pendingCode) return;
+        codeLinks.set(pendingCode, idx);
+        const code = pendingCode;
+        pendingCode = null;
+        $("#scanNote").classList.remove("show");
+        addProduct(idx);
+        toast("Linked — " + PRODUCTS[idx][0] + " added");
+      }
+      function escapeHtml(s) {
+        return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      }
+
+      let scanStream = null, scanTimer = null;
+      async function startScan() {
+        if (!("BarcodeDetector" in window) || !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+          showScanNote("Barcode scanning isn’t supported in this browser (it works in Chrome on Android). Quick search above does the same job — and a USB/Bluetooth scanner’s codes work too: type or scan the code into the search box and press Enter.");
+          return;
+        }
+        const overlay = $("#scanOverlay");
+        const video = $("#scanVideo");
+        try {
+          scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        } catch (e) {
+          showScanNote("Camera access was blocked, so scanning can’t start. Quick search above works just as well.");
+          return;
+        }
+        video.srcObject = scanStream;
+        overlay.classList.add("show");
+        await video.play().catch(() => {});
+        const detector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "qr_code"] });
+        let done = false;
+        scanTimer = setInterval(async () => {
+          if (done) return;
+          try {
+            const codes = await detector.detect(video);
+            if (codes && codes.length) {
+              done = true;
+              const val = codes[0].rawValue;
+              stopScan();
+              handleCode(val);
+            }
+          } catch (e) { /* keep trying */ }
+        }, 350);
+      }
+      function stopScan() {
+        clearInterval(scanTimer);
+        if (scanStream) scanStream.getTracks().forEach((t) => t.stop());
+        scanStream = null;
+        $("#scanOverlay").classList.remove("show");
+      }
+
+      /* ---------- events ---------- */
+      function syncDiscChips() {
+        const v = parseFloat($("#discountPct").value) || 0;
+        document.querySelectorAll("#discChips button").forEach((b) => {
+          b.classList.toggle("on", parseFloat(b.dataset.pct) === v);
+        });
+      }
+      function buildDiscChips() {
+        const box = $("#discChips");
+        [0, 5, 10, 15, 20, 25].forEach((pct) => {
+          const b = document.createElement("button");
+          b.type = "button"; b.dataset.pct = pct; b.textContent = pct + "%";
+          b.addEventListener("click", () => { $("#discountPct").value = pct; renderResults(); renderTotals(); syncDiscChips(); });
+          box.appendChild(b);
+        });
+      }
+
+      /* Hand the receipt to the customer's Mail or Messages app.
+         Two real <a> buttons — "Text receipt" and "Email receipt" —
+         whose hrefs are kept live by syncSendBtns(), so the team
+         member's own tap on a genuine sms:/mailto: link makes the
+         handoff. The previous version had ONE button whose target
+         depended on a small Email/Text toggle up in the sale panel:
+         left on Email, tapping it never texted anyone, and nothing on
+         screen said what had happened — hence "texting isn't working,
+         or it's not easy to assume it's working". Now each button is
+         labelled for what it does, and a tap reports back on screen:
+         it names the number/address being opened, copies the receipt
+         as a backup, and if the page is still in front a moment later
+         (the handoff was swallowed, as embedded webviews sometimes do
+         with sms: links) it says so and gives the paste fallback. */
+      function contactInfo() {
+        const raw = $("#custContact").value.trim();
+        const digits = raw.replace(/[^\d+]/g, "");
+        return {
+          raw,
+          email: raw.includes("@") ? raw : "",
+          digits,
+          phone: digits.replace(/\D/g, "").length >= 7 ? digits : ""
+        };
+      }
+      function prettyPhone(digits) {
+        const d = digits.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+        if (d.length === 10) return "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6);
+        return digits;
+      }
+      function buildMailUrl() {
+        if (cart.size === 0) return null;
+        const c = contactInfo();
+        if (!c.email) return null;
+        const subject = "Your receipt — " + money(compute().total) + " · Jaron and Codie Vergara";
+        return "mailto:" + encodeURIComponent(c.email) + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(receiptText());
+      }
+      function buildSmsUrl() {
+        if (cart.size === 0) return null;
+        const c = contactInfo();
+        if (!c.phone) return null;
+        // iOS Messages reads sms:number&body=… — Android reads ?body=…
+        // The old "?&body=" hybrid left the body empty in some handlers.
+        const sep = /iPhone|iPad|iPod/.test(navigator.userAgent) ? "&" : "?";
+        return "sms:" + c.phone + sep + "body=" + encodeURIComponent(receiptText());
+      }
+      function syncSendBtns() {
+        const eb = $("#emailBtn"), tb = $("#textBtn");
+        if (eb) eb.href = buildMailUrl() || "#";
+        if (tb) tb.href = buildSmsUrl() || "#";
+      }
+      function setSendStatus(msg) {
+        const el = $("#sendStatus");
+        if (el) el.textContent = msg || "";
+      }
+      function quietCopy(text) {
+        // Backup only — never let a clipboard hiccup block the handoff.
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            const p = navigator.clipboard.writeText(text);
+            if (p && p.catch) p.catch(() => {});
+          }
+        } catch (e) { /* ignore */ }
+      }
+      let textWatch = null;
+      function watchTextHandoff(phone) {
+        clearTimeout(textWatch);
+        textWatch = setTimeout(() => {
+          if (!document.hidden) {
+            setSendStatus("Still on this page — Messages didn't open. The receipt text is copied: open Messages, start a text to " + prettyPhone(phone) + ", and paste. (Or tap Copy text above, then paste it anywhere.)");
+          }
+        }, 1800);
+      }
+      document.addEventListener("visibilitychange", () => { if (document.hidden) clearTimeout(textWatch); });
+
+      function init() {
+        $("#catalogCount").textContent = PRODUCTS.length + " products · prices from amway.com, Oct 2026";
+        // Nov 8, 2026 expo-day sale: default the discount to 10% on that day only.
+        $("#discountPct").value = expoDefaultDiscount();
+        if (isExpoSaleDay()) {
+          $("#saleBannerBig").textContent = "TODAY — EXPO DAY — 10% OFF ALL PRICES";
+          $("#saleBannerSmall").textContent = "Sunday, November 8, 2026 only · Sale price shown on every item · 10% discount applied automatically in the totals";
+        }
+        buildChips();
+        buildDiscChips();
+        renderAll();
+
+        let searchTimer = null;
+        $("#search").addEventListener("input", () => {
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(renderResults, 60);
+        });
+        $("#search").addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            const v = $("#search").value.trim();
+            if (/^\d{6,}$/.test(v)) { e.preventDefault(); handleCode(v); }
+          }
+        });
+        $("#clearSearch").addEventListener("click", () => { $("#search").value = ""; renderResults(); $("#search").focus(); });
+
+        $("#discountPct").addEventListener("input", () => { renderResults(); renderCart(); renderTotals(); syncDiscChips(); });
+        $("#taxRate").addEventListener("input", renderTotals);
+        $("#custName").addEventListener("input", renderTotals);
+        $("#custContact").addEventListener("input", syncSendBtns);
+
+        $("#paySeg").addEventListener("click", (e) => {
+          const b = e.target.closest("button"); if (!b) return;
+          payMethod = b.dataset.pay;
+          document.querySelectorAll("#paySeg button").forEach((x) => x.classList.toggle("on", x === b));
+          renderTotals();
+        });
+        $("#cAdd").addEventListener("click", () => {
+          const name = $("#cName").value.trim();
+          const price = parseFloat($("#cPrice").value);
+          const qty = Math.max(1, parseInt($("#cQty").value, 10) || 1);
+          if (!name) { toast("Give the item a name first"); $("#cName").focus(); return; }
+          if (!(price >= 0) || $("#cPrice").value === "") { toast("Enter the item’s price"); $("#cPrice").focus(); return; }
+          const key = "c" + (++customSeq);
+          cart.set(key, { kind: "c", name, priceCents: toCents(price), qty });
+          $("#cName").value = ""; $("#cPrice").value = ""; $("#cQty").value = 1;
+          renderAll();
+          toast("Added " + name);
+        });
+
+        $("#scanBtn").addEventListener("click", startScan);
+        $("#scanClose").addEventListener("click", stopScan);
+
+        $("#textBtn").addEventListener("click", (e) => {
+          const err = $("#sendErr");
+          err.textContent = ""; setSendStatus("");
+          if (cart.size === 0) { e.preventDefault(); err.textContent = "Add at least one item before texting a receipt."; return; }
+          const c = contactInfo();
+          if (!c.phone) {
+            e.preventDefault();
+            err.textContent = c.email
+              ? "That’s an email address — tap “Email receipt” to email it, or replace it with the customer’s mobile number to text it."
+              : "Enter the customer’s mobile number in “Customer email or mobile number” above — then this button opens Messages with the receipt filled in.";
+            return;
+          }
+          syncSendBtns(); // href is already live; the tap itself follows it natively
+          quietCopy(receiptText()); // backup in case the handoff is swallowed
+          setSendStatus("Opening Messages to " + prettyPhone(c.phone) + " with the receipt filled in — just press Send there.");
+          watchTextHandoff(c.phone);
+        });
+
+        $("#emailBtn").addEventListener("click", (e) => {
+          const err = $("#sendErr");
+          err.textContent = ""; setSendStatus("");
+          if (cart.size === 0) { e.preventDefault(); err.textContent = "Add at least one item before emailing a receipt."; return; }
+          const c = contactInfo();
+          if (!c.email) {
+            e.preventDefault();
+            err.textContent = c.phone
+              ? "That’s a mobile number — tap “Text receipt” to text it, or replace it with the customer’s email address."
+              : "Enter the customer’s email address above for Email receipt — or their mobile number, then tap “Text receipt”.";
+            return;
+          }
+          syncSendBtns(); // href is already live; the tap itself follows it natively
+          setSendStatus("Opening Mail to " + c.email + " with the receipt filled in — just press Send there.");
+        });
+
+        $("#copyBtn").addEventListener("click", async () => {
+          const txt = receiptText();
+          try { await navigator.clipboard.writeText(txt); toast("Receipt copied — paste it anywhere"); }
+          catch (e) {
+            const ta = document.createElement("textarea");
+            ta.value = txt; document.body.appendChild(ta); ta.select();
+            try { document.execCommand("copy"); toast("Receipt copied — paste it anywhere"); }
+            catch (e2) { toast("Copy isn’t available here — use Download instead"); }
+            ta.remove();
+          }
+        });
+
+        $("#dlBtn").addEventListener("click", async () => {
+          const text = receiptText();
+          const fname = "receipt-" + receiptNo + ".txt";
+          // Phones: hand the file to the native share sheet (Save to Files,
+          // Mail, Messages…). A blob-anchor download is silently blocked in
+          // many embedded webviews, which is why Download used to do nothing.
+          if (window.isSecureContext && navigator.canShare) {
+            try {
+              const file = new File([text], fname, { type: "text/plain" });
+              if (navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: "Receipt " + receiptNo });
+                return;
+              }
+            } catch (e) {
+              if (e && e.name === "AbortError") return; // user closed the share sheet
+              // any other failure falls through to the download below
+            }
+          }
+          // Desktop path: blob download. The old code removed the anchor in
+          // the same tick as the click, which cancels the download in some
+          // browsers — keep it attached and clean up a few seconds later.
+          const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = fname;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 4000);
+          toast("Downloading " + fname + " — if nothing appears, tap Copy text and paste it anywhere");
+        });
+
+        $("#newSale").addEventListener("click", () => {
+          cart.clear();
+          receiptNo = makeReceiptNo();
+          $("#custName").value = "";
+          $("#custContact").value = "";
+          $("#discountPct").value = expoDefaultDiscount();
+          $("#sendErr").textContent = "";
+          setSendStatus("");
+          renderAll();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          toast("New sale started");
+        });
+
+      }
+      init();
+    </script>
+  </body>
+</html>
