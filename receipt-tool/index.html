@@ -267,6 +267,7 @@
         text-decoration:none; text-align:center;
       }
       .send-btn:active{ background:var(--accent-strong); }
+      .send-btn:disabled{ opacity:.65; cursor:wait; }
       .ghost-btn{
         border:1.5px solid var(--line); background:var(--surface-2); color:var(--ink);
         border-radius:11px; padding:12px 14px; font-weight:600; font-size:14.5px;
@@ -404,12 +405,12 @@
                 <input id="custName" type="text" autocomplete="off" placeholder="Customer name" />
               </div>
               <div class="field">
-                <label for="custContact">Customer email or mobile number</label>
-                <input id="custContact" type="text" autocomplete="off" placeholder="Email for email · mobile number for text" />
+                <label for="custContact">Customer email</label>
+                <input id="custContact" type="email" autocomplete="email" inputmode="email" placeholder="Customer email address" />
               </div>
               <div class="field">
                 <label>Sending the receipt</label>
-                <p class="send-hint">Under the receipt below, tap <strong>Text receipt</strong> or <strong>Email receipt</strong> — it opens Messages or Mail with the receipt already filled in, ready to send.</p>
+                <p class="send-hint">Under the receipt below, tap <strong>Email receipt</strong> — it sends the receipt from <strong>jcventia@gmail.com</strong> to the customer&rsquo;s email address.</p>
               </div>
             </div>
 
@@ -420,8 +421,7 @@
             <h2>Receipt</h2>
             <div class="receipt-paper" id="receiptPaper"></div>
             <div class="send-row">
-              <a class="send-btn" id="textBtn" href="#" role="button">Text receipt</a>
-              <a class="send-btn" id="emailBtn" href="#" role="button">Email receipt</a>
+              <button class="send-btn" id="emailBtn" type="button">Email receipt</button>
               <button class="ghost-btn" id="copyBtn" type="button">Copy text</button>
               <button class="ghost-btn" id="dlBtn" type="button">Download</button>
             </div>
@@ -808,7 +808,6 @@
         box.appendChild(g);
 
         renderReceipt(t);
-        syncSendBtns();
       }
       function trimPct(n) { return (Math.round(n * 1000) / 1000).toString(); }
 
@@ -830,9 +829,9 @@
         const head = document.createElement("div");
         head.className = "r-head";
         const s1 = document.createElement("div");
-        s1.className = "r-seller"; s1.textContent = "Jaron and Codie Vergara";
+        s1.className = "r-seller"; s1.textContent = "Healthy Home Holiday Expo";
         const s2 = document.createElement("div");
-        s2.className = "r-sub"; s2.textContent = "Independent Business Owners · Amway™";
+        s2.className = "r-sub"; s2.textContent = "Jaron and Codie Vergara — Independent Business Owners · Amway™";
         head.appendChild(s1); head.appendChild(s2);
         paper.appendChild(head);
         if (d.t.discPct === 10) {
@@ -911,9 +910,8 @@
         };
         const ctr = (s) => " ".repeat(Math.max(0, Math.floor((W - s.length) / 2))) + s;
         const out = [];
-        out.push(ctr("Jaron and Codie Vergara"));
-        out.push(ctr("Independent Business Owners"));
-        out.push(ctr("Amway"));
+        out.push(ctr("Healthy Home Holiday Expo"));
+        out.push(ctr("Jaron and Codie Vergara — Independent Business Owners · Amway™"));
         if (d.t.discPct === 10) out.push(ctr("*** NOV 8 EXPO DAY - 10% OFF ALL PRICES ***"));
         out.push("-".repeat(W));
         out.push(row("Receipt", d.no));
@@ -1046,79 +1044,78 @@
         });
       }
 
-      /* Hand the receipt to the customer's Mail or Messages app.
-         Two real <a> buttons — "Text receipt" and "Email receipt" —
-         whose hrefs are kept live by syncSendBtns(), so the team
-         member's own tap on a genuine sms:/mailto: link makes the
-         handoff. The previous version had ONE button whose target
-         depended on a small Email/Text toggle up in the sale panel:
-         left on Email, tapping it never texted anyone, and nothing on
-         screen said what had happened — hence "texting isn't working,
-         or it's not easy to assume it's working". Now each button is
-         labelled for what it does, and a tap reports back on screen:
-         it names the number/address being opened, copies the receipt
-         as a backup, and if the page is still in front a moment later
-         (the handoff was swallowed, as embedded webviews sometimes do
-         with sms: links) it says so and gives the paste fallback. */
-      function contactInfo() {
-        const raw = $("#custContact").value.trim();
-        const digits = raw.replace(/[^\d+]/g, "");
-        return {
-          raw,
-          email: raw.includes("@") ? raw : "",
-          digits,
-          phone: digits.replace(/\D/g, "").length >= 7 ? digits : ""
-        };
-      }
-      function prettyPhone(digits) {
-        const d = digits.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
-        if (d.length === 10) return "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6);
-        return digits;
-      }
-      function buildMailUrl() {
-        if (cart.size === 0) return null;
-        const c = contactInfo();
-        if (!c.email) return null;
-        const subject = "Your receipt — " + money(compute().total) + " · Jaron and Codie Vergara";
-        return "mailto:" + encodeURIComponent(c.email) + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(receiptText());
-      }
-      function buildSmsUrl() {
-        if (cart.size === 0) return null;
-        const c = contactInfo();
-        if (!c.phone) return null;
-        // iOS Messages reads sms:number&body=… — Android reads ?body=…
-        // The old "?&body=" hybrid left the body empty in some handlers.
-        const sep = /iPhone|iPad|iPod/.test(navigator.userAgent) ? "&" : "?";
-        return "sms:" + c.phone + sep + "body=" + encodeURIComponent(receiptText());
-      }
-      function syncSendBtns() {
-        const eb = $("#emailBtn"), tb = $("#textBtn");
-        if (eb) eb.href = buildMailUrl() || "#";
-        if (tb) tb.href = buildSmsUrl() || "#";
+      /* Email-only receipt sending via the JCVentia Receipt Email backend.
+         The backend (Google Apps Script, deployed Execute as Me
+         jcventia@gmail.com, Anyone access) sends the email from
+         jcventia@gmail.com. This page POSTs JSON {to, receiptText, receiptNo}
+         to it. No mail app handoff is used. */
+      const RECEIPT_EMAIL_ENDPOINT = "https://script.google.com/macros/s/AKfycbx91xKNKB7MbHTYhs-NWmaS2v9gY2ZXYE7IIvEInUKXC53Hk6jf9_VlEpCXOCGGrqs/exec";
+      function customerEmail() { return $("#custContact").value.trim(); }
+      function isValidEmail(s) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s || "");
       }
       function setSendStatus(msg) {
         const el = $("#sendStatus");
         if (el) el.textContent = msg || "";
       }
-      function quietCopy(text) {
-        // Backup only — never let a clipboard hiccup block the handoff.
+      async function copyReceiptForFallback(text) {
         try {
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            const p = navigator.clipboard.writeText(text);
-            if (p && p.catch) p.catch(() => {});
+            await navigator.clipboard.writeText(text);
+            return true;
           }
-        } catch (e) { /* ignore */ }
+        } catch (e) { /* fall through to legacy copy */ }
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+          document.body.appendChild(ta); ta.select();
+          const ok = document.execCommand("copy");
+          ta.remove();
+          return !!ok;
+        } catch (e) { return false; }
       }
-      let textWatch = null;
-      function watchTextHandoff(phone) {
-        clearTimeout(textWatch);
-        textWatch = setTimeout(() => {
-          if (!document.hidden) {
-            setSendStatus("Still on this page — Messages didn't open. The receipt text is copied: open Messages, start a text to " + prettyPhone(phone) + ", and paste. (Or tap Copy text above, then paste it anywhere.)");
+      let emailSending = false;
+      async function sendEmailReceipt() {
+        const err = $("#sendErr");
+        const btn = $("#emailBtn");
+        err.textContent = ""; setSendStatus("");
+        if (emailSending) return;
+        if (cart.size === 0) { err.textContent = "Add at least one item before emailing a receipt."; return; }
+        const to = customerEmail();
+        if (!isValidEmail(to)) {
+          err.textContent = "Please enter a valid email address for the customer — for example, name@example.com — then tap “Email receipt” again.";
+          $("#custContact").focus();
+          return;
+        }
+        const payload = { to: to, receiptText: receiptText(), receiptNo: receiptNo };
+        emailSending = true;
+        if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+        setSendStatus("Sending receipt to " + to + " from jcventia@gmail.com…");
+        try {
+          const res = await fetch(RECEIPT_EMAIL_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          let data = null;
+          try { data = await res.json(); } catch (e) { /* non-JSON response */ }
+          const backendFailed = data && (data.ok === false || data.success === false || data.error);
+          if (!res.ok || backendFailed) {
+            throw new Error(backendFailed && data.error ? String(data.error) : "HTTP " + res.status);
           }
-        }, 1800);
+          setSendStatus("Receipt sent from jcventia@gmail.com to " + to + ".");
+          toast("Receipt emailed to " + to);
+        } catch (e) {
+          const copied = await copyReceiptForFallback(payload.receiptText);
+          err.textContent = "Sending failed — the receipt could not be emailed from jcventia@gmail.com to " + to + ". Please try again.";
+          setSendStatus(copied
+            ? "Fallback: the receipt text has been copied. You can paste it into an email to " + to + " and send it manually. (Or tap Copy text above to copy it again.)"
+            : "Fallback: tap “Copy text” above to copy the receipt, then paste it into an email to " + to + " and send it manually.");
+        } finally {
+          emailSending = false;
+          if (btn) { btn.disabled = false; btn.textContent = "Email receipt"; }
+        }
       }
-      document.addEventListener("visibilitychange", () => { if (document.hidden) clearTimeout(textWatch); });
 
       function init() {
         $("#catalogCount").textContent = PRODUCTS.length + " products · prices from amway.com, Oct 2026";
@@ -1148,7 +1145,7 @@
         $("#discountPct").addEventListener("input", () => { renderResults(); renderCart(); renderTotals(); syncDiscChips(); });
         $("#taxRate").addEventListener("input", renderTotals);
         $("#custName").addEventListener("input", renderTotals);
-        $("#custContact").addEventListener("input", syncSendBtns);
+        $("#custContact").addEventListener("input", () => { $("#sendErr").textContent = ""; });
 
         $("#paySeg").addEventListener("click", (e) => {
           const b = e.target.closest("button"); if (!b) return;
@@ -1172,39 +1169,7 @@
         $("#scanBtn").addEventListener("click", startScan);
         $("#scanClose").addEventListener("click", stopScan);
 
-        $("#textBtn").addEventListener("click", (e) => {
-          const err = $("#sendErr");
-          err.textContent = ""; setSendStatus("");
-          if (cart.size === 0) { e.preventDefault(); err.textContent = "Add at least one item before texting a receipt."; return; }
-          const c = contactInfo();
-          if (!c.phone) {
-            e.preventDefault();
-            err.textContent = c.email
-              ? "That’s an email address — tap “Email receipt” to email it, or replace it with the customer’s mobile number to text it."
-              : "Enter the customer’s mobile number in “Customer email or mobile number” above — then this button opens Messages with the receipt filled in.";
-            return;
-          }
-          syncSendBtns(); // href is already live; the tap itself follows it natively
-          quietCopy(receiptText()); // backup in case the handoff is swallowed
-          setSendStatus("Opening Messages to " + prettyPhone(c.phone) + " with the receipt filled in — just press Send there.");
-          watchTextHandoff(c.phone);
-        });
-
-        $("#emailBtn").addEventListener("click", (e) => {
-          const err = $("#sendErr");
-          err.textContent = ""; setSendStatus("");
-          if (cart.size === 0) { e.preventDefault(); err.textContent = "Add at least one item before emailing a receipt."; return; }
-          const c = contactInfo();
-          if (!c.email) {
-            e.preventDefault();
-            err.textContent = c.phone
-              ? "That’s a mobile number — tap “Text receipt” to text it, or replace it with the customer’s email address."
-              : "Enter the customer’s email address above for Email receipt — or their mobile number, then tap “Text receipt”.";
-            return;
-          }
-          syncSendBtns(); // href is already live; the tap itself follows it natively
-          setSendStatus("Opening Mail to " + c.email + " with the receipt filled in — just press Send there.");
-        });
+        $("#emailBtn").addEventListener("click", () => { sendEmailReceipt(); });
 
         $("#copyBtn").addEventListener("click", async () => {
           const txt = receiptText();
