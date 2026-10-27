@@ -110,26 +110,12 @@
         border:0; background:transparent; color:var(--faint);
         width:30px; height:30px; border-radius:50%; font-size:17px; line-height:1; display:none;
       }
-      .scan-btn{
-        flex:0 0 auto; display:inline-flex; align-items:center; gap:7px;
-        padding:0 14px; border-radius:12px;
-        border:1.5px solid var(--line); background:var(--surface-2); color:var(--ink);
-        font-weight:600; font-size:15px;
-      }
-      .scan-btn:active{ transform:translateY(1px); }
       .chips{ display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
       .chip{
         border:1px solid var(--line); background:var(--surface-2); color:var(--ink);
         border-radius:999px; padding:6px 12px; font-size:13.5px; font-weight:600;
       }
       .chip.on{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
-      .scan-note{
-        margin-top:12px; padding:10px 12px; border-radius:10px;
-        background:var(--fee-bg); color:var(--fee-ink); font-size:14px; display:none;
-      }
-      .scan-note.show{ display:block; }
-      .scan-note button{ margin-left:8px; border:0; background:transparent; color:inherit; font-weight:700; text-decoration:underline; padding:0; }
-
       /* ---------- product list ---------- */
       .results-meta{ color:var(--faint); font-size:13px; margin:14px 2px 8px; }
       .plist{ display:flex; flex-direction:column; }
@@ -155,11 +141,6 @@
         font-weight:700; padding:10px 16px; font-size:15px; min-width:64px;
       }
       .add-btn:active{ background:var(--accent-strong); }
-      .link-btn{
-        flex:0 0 auto; border:1.5px dashed var(--fee-ink); border-radius:10px;
-        background:transparent; color:var(--fee-ink);
-        font-weight:700; padding:9px 12px; font-size:14px;
-      }
       .stepper{ display:inline-flex; align-items:center; gap:2px; flex:0 0 auto; }
       .stepper button{
         width:36px; height:36px; border-radius:10px; border:1px solid var(--line);
@@ -223,6 +204,31 @@
       .cust-grid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:14px; }
       @media (min-width:480px){ .cust-grid{ grid-template-columns:1fr 1fr; } .cust-grid .wide{ grid-column:1 / -1; } }
 
+      /* ---------- per-item back order toggle ---------- */
+      .cline .bo-line{ display:flex; align-items:center; gap:8px; margin-top:7px; }
+      .cline .bo-line .bo-lab{ font-size:13px; font-weight:600; color:var(--muted); }
+      .cline .bo-line.on .bo-lab{ color:var(--special-ink); font-weight:700; }
+      .switch.sm input{ width:44px; height:26px; }
+      .switch.sm input::after{ width:20px; height:20px; }
+      .switch.sm input:checked::after{ transform:translateX(18px); }
+      .switch{ flex:0 0 auto; display:block; line-height:0; }
+      .switch input{
+        appearance:none; -webkit-appearance:none;
+        display:block; width:52px; height:30px; margin:0; cursor:pointer;
+        border:0; border-radius:999px; background:var(--line);
+        position:relative; transition:background .2s ease;
+      }
+      .switch input::after{
+        content:""; position:absolute; top:3px; left:3px;
+        width:24px; height:24px; border-radius:50%;
+        background:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,.3);
+        transition:transform .2s ease;
+      }
+      .switch input:checked{ background:var(--accent); }
+      .switch input:checked::after{ transform:translateX(22px); }
+      .switch input:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+      @media (prefers-reduced-motion: reduce){ .switch input, .switch input::after{ transition:none; } }
+
       /* ---------- totals ---------- */
       .totals{ margin-top:14px; border-top:2px solid var(--line); padding-top:10px; }
       .trow{ display:flex; justify-content:space-between; gap:12px; padding:3px 0; font-size:15px; }
@@ -258,6 +264,7 @@
       .receipt-paper .r-detail{ font-size:12px; padding-left:12px; }
       .receipt-paper .r-total{ font-size:16.5px; font-weight:700; }
       .receipt-paper .r-foot{ text-align:center; margin-top:4px; font-size:12.5px; }
+      .receipt-paper .r-bo{ font-weight:700; letter-spacing:.05em; }
       .receipt-paper .strike{ text-decoration:line-through; }
 
       .send-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
@@ -288,18 +295,49 @@
 
       @media (min-width:960px){ .wrap{ padding-bottom:40px; } }
 
-      /* ---------- scan overlay + toast ---------- */
-      .scan-overlay{
-        position:fixed; inset:0; z-index:60; background:rgba(10,12,11,.92);
-        display:none; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:20px;
+      /* ---------- mobile sale sheet ----------
+         On phones the sale column becomes a partial bottom sheet: a 60px
+         summary bar stays visible at the bottom (page scrolls freely above
+         it), and adding an item slides the sheet up to at most 66% of the
+         screen height — the catalog stays visible above it, the sheet's
+         contents scroll inside it, and one tap on the bar collapses it. */
+      .sheet-bar{ display:none; }
+      @media (min-width:960px){ .sale-scroll{ display:contents; } }
+      @media (max-width:959px){
+        .wrap{ padding-bottom:112px; }
+        .sale-col{
+          position:fixed; left:10px; right:10px;
+          bottom:calc(10px + env(safe-area-inset-bottom));
+          z-index:55; max-height:66dvh;
+          display:flex; flex-direction:column;
+          background:var(--surface); border:1px solid var(--line);
+          border-radius:18px; box-shadow:0 14px 44px rgba(0,0,0,.30);
+          transform:translateY(calc(100% - 60px));
+          transition:transform .3s ease;
+          overflow:hidden;
+        }
+        .sale-col.open{ transform:translateY(0); }
+        .sheet-bar{
+          display:flex; align-items:center; gap:10px;
+          flex:0 0 auto; width:100%; min-height:60px; box-sizing:border-box;
+          border:0; background:var(--surface); color:var(--ink);
+          padding:10px 16px; text-align:left;
+        }
+        .sheet-bar .sb-title{ font-weight:800; font-size:16px; white-space:nowrap; }
+        .sheet-bar .sb-count{ color:var(--muted); font-size:13.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sheet-bar .sb-total{ margin-left:auto; font-weight:800; font-size:17px; white-space:nowrap; font-variant-numeric:tabular-nums; }
+        .sheet-bar .sb-chev{ flex:0 0 auto; display:inline-flex; color:var(--muted); transition:transform .3s ease; }
+        .sale-col.open .sb-chev{ transform:rotate(180deg); }
+        .sale-scroll{ overflow-y:auto; -webkit-overflow-scrolling:touch; min-height:0; }
+        .sale-scroll .card{ box-shadow:none; border:0; border-top:1px solid var(--line); border-radius:0; }
+        .sale-scroll .card + .card{ margin-top:0; }
       }
-      .scan-overlay.show{ display:flex; }
-      .scan-overlay video{ width:min(92vw,480px); border-radius:14px; background:#000; }
-      .scan-overlay p{ color:#e8ece9; font-size:15px; text-align:center; max-width:420px; }
-      .scan-overlay .close-scan{
-        border:0; border-radius:11px; padding:12px 22px; font-weight:700;
-        background:#fff; color:#14181a; font-size:15px;
+      @media (prefers-reduced-motion: reduce){
+        .sale-col{ transition:none; }
+        .sheet-bar .sb-chev{ transition:none; }
       }
+
+      /* ---------- toast ---------- */
       .toast{
         position:fixed; left:50%; bottom:86px; transform:translateX(-50%) translateY(20px);
         background:var(--ink); color:var(--bg); padding:11px 18px; border-radius:999px;
@@ -334,13 +372,8 @@
                 <input id="search" type="search" inputmode="search" autocomplete="off" placeholder="Search the catalog — try “XS”, “SA8”, “Double X”, or a SKU…" aria-label="Search products" />
                 <button id="clearSearch" type="button" aria-label="Clear search">×</button>
               </div>
-              <button class="scan-btn" id="scanBtn" type="button">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M4 12h16"/></svg>
-                Scan
-              </button>
             </div>
             <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
-            <div class="scan-note" id="scanNote"></div>
             <div class="results-meta" id="resultsMeta"></div>
             <div class="plist" id="plist"></div>
           </section>
@@ -366,7 +399,14 @@
         </div>
 
         <!-- ============ RIGHT: sale + receipt ============ -->
-        <div class="sale-col">
+        <div class="sale-col" id="saleCol">
+          <button class="sheet-bar" id="sheetBar" type="button" aria-expanded="false" aria-controls="saleScroll">
+            <span class="sb-title">Current sale</span>
+            <span class="sb-count" id="sheetCount">Nothing added yet</span>
+            <span class="sb-total" id="sheetTotal">$0.00</span>
+            <span class="sb-chev" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></span>
+          </button>
+          <div class="sale-scroll" id="saleScroll">
           <section class="card" id="saleCard" aria-label="Current sale">
             <h2>Current sale</h2>
             <div id="cartLines"></div>
@@ -400,8 +440,12 @@
             </div>
 
             <div class="cust-grid">
-              <div class="field wide">
-                <label for="custName">Sold to</label>
+              <div class="field">
+                <label for="iboName">IBO name</label>
+                <input id="iboName" type="text" autocomplete="off" placeholder="IBO name" />
+              </div>
+              <div class="field">
+                <label for="custName">Customer name</label>
                 <input id="custName" type="text" autocomplete="off" placeholder="Customer name" />
               </div>
               <div class="field">
@@ -429,14 +473,9 @@
             <div class="send-err" id="sendErr" role="alert"></div>
             <button class="new-sale" id="newSale" type="button">New sale — clear everything</button>
           </section>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="scan-overlay" id="scanOverlay">
-      <video id="scanVideo" playsinline muted></video>
-      <p>Point the camera at a barcode. If the code isn’t linked to a product yet, you’ll link it once — after that, scanning adds it straight to the sale.</p>
-      <button class="close-scan" id="scanClose" type="button">Cancel</button>
     </div>
 
     <div class="toast" id="toast" role="status"></div>
@@ -521,8 +560,6 @@
       let activeCat = -1; // -1 = all
       let payMethod = "Credit Card";
       let receiptNo = makeReceiptNo();
-      let codeLinks = new Map(); // barcode string -> product idx (this session only)
-      let pendingCode = null;
 
       function makeReceiptNo() {
         const d = new Date();
@@ -550,7 +587,7 @@
           const lineFees = fee * it.qty;
           merch += lineMerch; fees += lineFees; count += it.qty;
           if (it.kind === "p" && (PRODUCTS[it.idx][3] & 4)) espringMerch += lineMerch;
-          lines.push({ name, qty: it.qty, unit, fee, list, sku, lineMerch, lineFees });
+          lines.push({ name, qty: it.qty, unit, fee, list, sku, lineMerch, lineFees, backOrder: !!it.backOrder });
         }
         const discPct = clampNum(parseFloat($("#discountPct").value) || 0, 0, 100);
         const discount = Math.round(merch * discPct / 100);
@@ -677,12 +714,7 @@
           row.appendChild(price);
 
           const qty = cartQty(idx);
-          if (pendingCode) {
-            const lb = document.createElement("button");
-            lb.type = "button"; lb.className = "link-btn"; lb.textContent = "Link code";
-            lb.addEventListener("click", () => linkCode(idx));
-            row.appendChild(lb);
-          } else if (qty > 0) {
+          if (qty > 0) {
             row.appendChild(stepperEl(
               () => changeQty("p" + idx, -1),
               () => changeQty("p" + idx, 1),
@@ -720,6 +752,7 @@
         if (it) it.qty += (qty || 1);
         else cart.set(key, { kind: "p", idx, qty: qty || 1 });
         renderAll();
+        openSheet();
       }
       function changeQty(key, delta) {
         const it = cart.get(key);
@@ -768,6 +801,20 @@
           det.className = "cdetail"; det.textContent = detailBits.join(" · ");
           info.appendChild(nm); info.appendChild(det);
           info.appendChild(stepperEl(() => changeQty(key, -1), () => changeQty(key, 1), it.qty));
+          const boLine = document.createElement("div");
+          boLine.className = "bo-line" + (it.backOrder ? " on" : "");
+          const boLab = document.createElement("span");
+          boLab.className = "bo-lab"; boLab.textContent = "Back order";
+          const boSwitch = document.createElement("label");
+          boSwitch.className = "switch sm";
+          const boInput = document.createElement("input");
+          boInput.type = "checkbox";
+          boInput.checked = !!it.backOrder;
+          boInput.setAttribute("aria-label", "Back order — " + nm.textContent + " is not in stock at the event");
+          boInput.addEventListener("change", () => { it.backOrder = boInput.checked; renderAll(); });
+          boSwitch.appendChild(boInput);
+          boLine.appendChild(boLab); boLine.appendChild(boSwitch);
+          info.appendChild(boLine);
           row.appendChild(info);
           const amt = document.createElement("div");
           amt.className = "camt";
@@ -807,6 +854,10 @@
         g.appendChild(ga); g.appendChild(gb);
         box.appendChild(g);
 
+        // Keep the phone sheet bar summary in step with the sale.
+        $("#sheetTotal").textContent = money(t.total);
+        $("#sheetCount").textContent = t.count === 0 ? "Nothing added yet" : t.count + (t.count === 1 ? " item" : " items");
+
         renderReceipt(t);
       }
       function trimPct(n) { return (Math.round(n * 1000) / 1000).toString(); }
@@ -817,6 +868,7 @@
         const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
         return {
           no: receiptNo, dateStr, timeStr,
+          ibo: $("#iboName").value.trim(),
           soldTo: $("#custName").value.trim(),
           pay: payMethod, t
         };
@@ -831,7 +883,7 @@
         const s1 = document.createElement("div");
         s1.className = "r-seller"; s1.textContent = "Healthy Home Holiday Expo";
         const s2 = document.createElement("div");
-        s2.className = "r-sub"; s2.textContent = "Jaron and Codie Vergara — Independent Business Owners · Amway™";
+        s2.className = "r-sub"; s2.textContent = "Your Amway order receipt";
         head.appendChild(s1); head.appendChild(s2);
         paper.appendChild(head);
         if (d.t.discPct === 10) {
@@ -844,7 +896,8 @@
         paper.appendChild(ruleEl());
         paper.appendChild(lineEl("Receipt", d.no));
         paper.appendChild(lineEl("Date", d.dateStr + " · " + d.timeStr));
-        if (d.soldTo) paper.appendChild(lineEl("Sold to", d.soldTo));
+        if (d.ibo) paper.appendChild(lineEl("IBO", d.ibo));
+        if (d.soldTo) paper.appendChild(lineEl("Customer", d.soldTo));
         paper.appendChild(ruleEl());
 
         if (d.t.lines.length === 0) {
@@ -872,6 +925,15 @@
             det.className = "r-detail";
             det.textContent = detParts.join(" · ");
             paper.appendChild(det);
+          }
+          if (L.backOrder) {
+            const boDet = document.createElement("div");
+            boDet.className = "r-detail";
+            const boSpan = document.createElement("span");
+            boSpan.className = "r-bo"; boSpan.textContent = "** BACK ORDER **";
+            boDet.appendChild(boSpan);
+            boDet.appendChild(document.createTextNode(" — not in stock at the event"));
+            paper.appendChild(boDet);
           }
         }
         paper.appendChild(ruleEl());
@@ -911,12 +973,13 @@
         const ctr = (s) => " ".repeat(Math.max(0, Math.floor((W - s.length) / 2))) + s;
         const out = [];
         out.push(ctr("Healthy Home Holiday Expo"));
-        out.push(ctr("Jaron and Codie Vergara — Independent Business Owners · Amway™"));
+        out.push(ctr("Your Amway order receipt"));
         if (d.t.discPct === 10) out.push(ctr("*** NOV 8 EXPO DAY - 10% OFF ALL PRICES ***"));
         out.push("-".repeat(W));
         out.push(row("Receipt", d.no));
         out.push(row("Date", d.dateStr + " " + d.timeStr));
-        if (d.soldTo) out.push(row("Sold to", d.soldTo));
+        if (d.ibo) out.push(row("IBO", d.ibo));
+        if (d.soldTo) out.push(row("Customer", d.soldTo));
         out.push("-".repeat(W));
         for (const L of d.t.lines) {
           out.push(row(L.qty + " x " + L.name, money(L.lineMerch + L.lineFees)));
@@ -925,6 +988,7 @@
           if (L.sku) tParts.push("SKU " + L.sku);
           if (!L.list && (L.qty > 1 || L.fee)) tParts.push(money(L.unit) + " each" + (L.fee ? " + " + money(L.fee) + " fee" : ""));
           if (tParts.length) out.push("   " + tParts.join(" · "));
+          if (L.backOrder) out.push("   ** BACK ORDER ** - not in stock at the event");
         }
         out.push("-".repeat(W));
         out.push(row("Subtotal", money(d.t.merch)));
@@ -950,82 +1014,15 @@
         toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
       }
 
-      /* ---------- barcode scanning ---------- */
-      function showScanNote(html, sticky) {
-        const n = $("#scanNote");
-        n.innerHTML = html;
-        n.classList.add("show");
-        const cancel = n.querySelector("[data-cancel-link]");
-        if (cancel) cancel.addEventListener("click", () => { pendingCode = null; n.classList.remove("show"); renderResults(); });
-        if (!sticky) setTimeout(() => { if (!pendingCode) n.classList.remove("show"); }, 6000);
+      /* ---------- mobile sale sheet ---------- */
+      const sheetMq = window.matchMedia("(max-width: 959px)");
+      function setSheet(open) {
+        const col = $("#saleCol");
+        col.classList.toggle("open", open);
+        $("#sheetBar").setAttribute("aria-expanded", open ? "true" : "false");
       }
-      function handleCode(code) {
-        code = String(code).trim();
-        if (!code) return;
-        if (codeLinks.has(code)) {
-          const idx = codeLinks.get(code);
-          addProduct(idx);
-          toast("Added " + PRODUCTS[idx][0]);
-          return;
-        }
-        pendingCode = code;
-        $("#search").value = "";
-        activeCat = -1; buildChips();
-        showScanNote("Code <strong>" + escapeHtml(code) + "</strong> isn’t linked to a product yet. Find the product in the list and tap <strong>Link code</strong> — from then on, scanning it adds the item.<button type='button' data-cancel-link>Cancel</button>", true);
-        renderResults();
-        document.querySelector(".find-col").scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-      function linkCode(idx) {
-        if (!pendingCode) return;
-        codeLinks.set(pendingCode, idx);
-        const code = pendingCode;
-        pendingCode = null;
-        $("#scanNote").classList.remove("show");
-        addProduct(idx);
-        toast("Linked — " + PRODUCTS[idx][0] + " added");
-      }
-      function escapeHtml(s) {
-        return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-      }
-
-      let scanStream = null, scanTimer = null;
-      async function startScan() {
-        if (!("BarcodeDetector" in window) || !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
-          showScanNote("Barcode scanning isn’t supported in this browser (it works in Chrome on Android). Quick search above does the same job — and a USB/Bluetooth scanner’s codes work too: type or scan the code into the search box and press Enter.");
-          return;
-        }
-        const overlay = $("#scanOverlay");
-        const video = $("#scanVideo");
-        try {
-          scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-        } catch (e) {
-          showScanNote("Camera access was blocked, so scanning can’t start. Quick search above works just as well.");
-          return;
-        }
-        video.srcObject = scanStream;
-        overlay.classList.add("show");
-        await video.play().catch(() => {});
-        const detector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "qr_code"] });
-        let done = false;
-        scanTimer = setInterval(async () => {
-          if (done) return;
-          try {
-            const codes = await detector.detect(video);
-            if (codes && codes.length) {
-              done = true;
-              const val = codes[0].rawValue;
-              stopScan();
-              handleCode(val);
-            }
-          } catch (e) { /* keep trying */ }
-        }, 350);
-      }
-      function stopScan() {
-        clearInterval(scanTimer);
-        if (scanStream) scanStream.getTracks().forEach((t) => t.stop());
-        scanStream = null;
-        $("#scanOverlay").classList.remove("show");
-      }
+      function openSheet() { if (sheetMq.matches) setSheet(true); }
+      function collapseSheet() { setSheet(false); }
 
       /* ---------- events ---------- */
       function syncDiscChips() {
@@ -1134,17 +1131,12 @@
           clearTimeout(searchTimer);
           searchTimer = setTimeout(renderResults, 60);
         });
-        $("#search").addEventListener("keydown", (e) => {
-          if (e.key === "Enter") {
-            const v = $("#search").value.trim();
-            if (/^\d{6,}$/.test(v)) { e.preventDefault(); handleCode(v); }
-          }
-        });
         $("#clearSearch").addEventListener("click", () => { $("#search").value = ""; renderResults(); $("#search").focus(); });
 
         $("#discountPct").addEventListener("input", () => { renderResults(); renderCart(); renderTotals(); syncDiscChips(); });
         $("#taxRate").addEventListener("input", renderTotals);
         $("#custName").addEventListener("input", renderTotals);
+        $("#iboName").addEventListener("input", renderTotals);
         $("#custContact").addEventListener("input", () => { $("#sendErr").textContent = ""; });
 
         $("#paySeg").addEventListener("click", (e) => {
@@ -1163,11 +1155,13 @@
           cart.set(key, { kind: "c", name, priceCents: toCents(price), qty });
           $("#cName").value = ""; $("#cPrice").value = ""; $("#cQty").value = 1;
           renderAll();
+          openSheet();
           toast("Added " + name);
         });
 
-        $("#scanBtn").addEventListener("click", startScan);
-        $("#scanClose").addEventListener("click", stopScan);
+        $("#sheetBar").addEventListener("click", () => {
+          setSheet(!$("#saleCol").classList.contains("open"));
+        });
 
         $("#emailBtn").addEventListener("click", () => { sendEmailReceipt(); });
 
@@ -1218,12 +1212,14 @@
         $("#newSale").addEventListener("click", () => {
           cart.clear();
           receiptNo = makeReceiptNo();
+          $("#iboName").value = "";
           $("#custName").value = "";
           $("#custContact").value = "";
           $("#discountPct").value = expoDefaultDiscount();
           $("#sendErr").textContent = "";
           setSendStatus("");
           renderAll();
+          collapseSheet();
           window.scrollTo({ top: 0, behavior: "smooth" });
           toast("New sale started");
         });
