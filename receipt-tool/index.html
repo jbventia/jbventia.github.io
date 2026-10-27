@@ -298,9 +298,11 @@
       /* ---------- mobile sale sheet ----------
          On phones the sale column becomes a partial bottom sheet: a 60px
          summary bar stays visible at the bottom (page scrolls freely above
-         it), and adding an item slides the sheet up to at most 66% of the
-         screen height — the catalog stays visible above it, the sheet's
-         contents scroll inside it, and one tap on the bar collapses it. */
+         it). Adding an item only updates the summary bar (count + total)
+         and never expands the sheet — the catalog stays fully visible.
+         The seller opens the sheet only by tapping the summary bar, which
+         expands it to at most 66% of the screen height with its contents
+         scrolling inside it, and one tap on the bar collapses it again. */
       .sheet-bar{ display:none; }
       @media (min-width:960px){ .sale-scroll{ display:contents; } }
       @media (max-width:959px){
@@ -752,7 +754,9 @@
         if (it) it.qty += (qty || 1);
         else cart.set(key, { kind: "p", idx, qty: qty || 1 });
         renderAll();
-        openSheet();
+        // Intentionally do NOT expand the sale sheet on add — the slim
+        // summary bar (updated by renderTotals via renderAll) is enough.
+        // The seller opens the sheet themselves by tapping the bar.
       }
       function changeQty(key, delta) {
         const it = cart.get(key);
@@ -1155,7 +1159,8 @@
           cart.set(key, { kind: "c", name, priceCents: toCents(price), qty });
           $("#cName").value = ""; $("#cPrice").value = ""; $("#cQty").value = 1;
           renderAll();
-          openSheet();
+          // Same rule as catalog adds: update the summary bar only,
+          // do not auto-expand the sale sheet.
           toast("Added " + name);
         });
 
