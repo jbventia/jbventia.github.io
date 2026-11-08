@@ -437,7 +437,16 @@
                 <button type="button" data-pay="Credit Card" class="on">Credit Card</button>
                 <button type="button" data-pay="Venmo">Venmo</button>
                 <button type="button" data-pay="Apple Pay">Apple Pay</button>
+                <button type="button" data-pay="Cash">Cash</button>
                 <button type="button" data-pay="Other">Other</button>
+              </div>
+            </div>
+
+            <div class="ctl" id="cashCtl" style="margin-top:10px;display:none">
+              <label for="cashTendered">Amount tendered</label>
+              <div class="pct-wrap">
+                <span>$</span>
+                <input id="cashTendered" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" style="width:120px" />
               </div>
             </div>
 
@@ -561,6 +570,14 @@
       let customSeq = 0;
       let activeCat = -1; // -1 = all
       let payMethod = "Credit Card";
+      // Cash: amount the customer handed over, in cents; null when not
+      // paying cash or nothing entered yet.
+      function cashTenderedCents() {
+        if (payMethod !== "Cash") return null;
+        const v = parseFloat($("#cashTendered").value);
+        if (!(v >= 0)) return null;
+        return toCents(v);
+      }
       let receiptNo = makeReceiptNo();
 
       function makeReceiptNo() {
@@ -858,6 +875,21 @@
         g.appendChild(ga); g.appendChild(gb);
         box.appendChild(g);
 
+        // Cash: show change due (or the balance still owed) right under
+        // the total so the seller sees it while the customer is there.
+        if (payMethod === "Cash") {
+          const tendered = cashTenderedCents();
+          if (tendered != null) {
+            const diff = tendered - t.total;
+            const r = document.createElement("div");
+            r.className = "trow";
+            const a = document.createElement("span"); a.className = "tl"; a.textContent = diff >= 0 ? "Change due" : "Balance due";
+            const b = document.createElement("span"); b.className = "tv"; b.textContent = money(Math.abs(diff));
+            r.appendChild(a); r.appendChild(b);
+            box.appendChild(r);
+          }
+        }
+
         // Keep the phone sheet bar summary in step with the sale.
         $("#sheetTotal").textContent = money(t.total);
         $("#sheetCount").textContent = t.count === 0 ? "Nothing added yet" : t.count + (t.count === 1 ? " item" : " items");
@@ -870,11 +902,13 @@
         const now = new Date();
         const dateStr = now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
         const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+        const tendered = cashTenderedCents();
         return {
           no: receiptNo, dateStr, timeStr,
           ibo: $("#iboName").value.trim(),
           soldTo: $("#custName").value.trim(),
-          pay: payMethod, t
+          pay: payMethod, t,
+          tendered, change: tendered == null ? null : tendered - t.total
         };
       }
 
@@ -948,7 +982,16 @@
         const tot = lineEl("TOTAL", money(d.t.total));
         tot.classList.add("r-total");
         paper.appendChild(tot);
-        paper.appendChild(lineEl("Paid by", d.pay + " (charged separately)"));
+        if (d.pay === "Cash") {
+          paper.appendChild(lineEl("Paid by", "Cash"));
+          if (d.tendered != null) {
+            paper.appendChild(lineEl("Amount tendered", money(d.tendered)));
+            if (d.change >= 0) paper.appendChild(lineEl("Change due", money(d.change)));
+            else paper.appendChild(lineEl("Balance due", money(-d.change)));
+          }
+        } else {
+          paper.appendChild(lineEl("Paid by", d.pay + " (charged separately)"));
+        }
         paper.appendChild(ruleEl());
         const foot = document.createElement("div");
         foot.className = "r-foot";
@@ -1000,7 +1043,16 @@
         if (d.t.fees > 0) out.push(row("Handling fees", money(d.t.fees)));
         out.push(row("Tax (" + trimPct(d.t.taxRate) + "%)", money(d.t.tax)));
         out.push(row("TOTAL", money(d.t.total)));
-        out.push(row("Paid by", d.pay + " (charged separately)"));
+        if (d.pay === "Cash") {
+          out.push(row("Paid by", "Cash"));
+          if (d.tendered != null) {
+            out.push(row("Amount tendered", money(d.tendered)));
+            if (d.change >= 0) out.push(row("Change due", money(d.change)));
+            else out.push(row("Balance due", money(-d.change)));
+          }
+        } else {
+          out.push(row("Paid by", d.pay + " (charged separately)"));
+        }
         out.push("-".repeat(W));
         out.push(ctr("Mahalo for shopping with us!"));
         return out.join("\n");
@@ -1139,6 +1191,7 @@
 
         $("#discountPct").addEventListener("input", () => { renderResults(); renderCart(); renderTotals(); syncDiscChips(); });
         $("#taxRate").addEventListener("input", renderTotals);
+        $("#cashTendered").addEventListener("input", renderTotals);
         $("#custName").addEventListener("input", renderTotals);
         $("#iboName").addEventListener("input", renderTotals);
         $("#custContact").addEventListener("input", () => { $("#sendErr").textContent = ""; });
@@ -1147,6 +1200,7 @@
           const b = e.target.closest("button"); if (!b) return;
           payMethod = b.dataset.pay;
           document.querySelectorAll("#paySeg button").forEach((x) => x.classList.toggle("on", x === b));
+          $("#cashCtl").style.display = payMethod === "Cash" ? "" : "none";
           renderTotals();
         });
         $("#cAdd").addEventListener("click", () => {
